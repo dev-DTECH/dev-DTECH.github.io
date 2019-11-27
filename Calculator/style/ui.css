@@ -1,0 +1,113 @@
+*{
+    margin: 0%;
+    padding: 0%;
+    
+}
+body
+{
+
+    display: grid;
+    
+    background-color: bisque;
+}
+.calculator
+
+{
+    display:grid;
+    
+    width: 300px;
+    height: 300px;
+    
+
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    
+    background-color: white;
+
+}
+#display
+{
+    justify-self: center;
+    
+    height:50px;
+    width: 50%;
+    min-width: 50%;;
+    
+    background-color: aqua;
+}
+.calculator div{
+    background-color: blueviolet;
+    border: 5px solid black;
+    cursor: pointer;
+    text-align: center;
+   
+
+}
+#divide{
+    grid-row: 1/span 2;
+    grid-column: 1/span 3;
+}
+#multiply{
+    grid-row: 1/ span 2;
+    grid-column: 4/ span 3;
+}
+#cancel{
+    grid-row: 1/ span 2;
+    grid-column: 7/ span 2;
+}
+#nine{
+    grid-row: 3/span 2;
+    grid-column: 1/span 2;
+}
+#eight{
+    grid-row: 3/ span 2;
+    grid-column: 3/ span 2;
+}
+#seven{
+    grid-row: 3/ span 2;
+    grid-column: 5/ span 2;
+}
+#minus{
+    grid-row: 3/ span 3;
+    grid-column: 7/ span 2;
+}
+#six{
+    grid-row: 5/span 2;
+    grid-column: 1/span 2;
+}
+#five{
+    grid-row: 5/span 2;
+    grid-column: 3/span 2;
+}
+#four{
+    grid-row: 5/span 2;
+    grid-column: 5/span 2;
+}
+#plus{
+    grid-row: 6/span 3;
+    grid-column: 7/span 2;
+}
+#three{
+    grid-row: 7/span 2;
+    grid-column: 1/span 2;
+}
+#two{
+    grid-row: 7/span 2;
+    grid-column: 3/span 2;
+}
+#one{
+    grid-row: 7/span 2;
+    grid-column: 5/span 2;
+}
+#zero{
+    grid-row: 9/span 2;
+    grid-column: 3/span 2;
+}#dec{
+    grid-row: 9/span 2;
+    grid-column: 1/span 2;
+}
+#equals{
+    grid-row: 9/span 2;
+    grid-column: 5/span 4;
+}
