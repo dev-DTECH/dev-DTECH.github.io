@@ -26,6 +26,9 @@ let GAME = {
 			this.points.push({ x: a, y: b });
 		}
 	},
+	wall:{
+		
+	},
 	camera: {
 		x: 0,
 		y: 0,
