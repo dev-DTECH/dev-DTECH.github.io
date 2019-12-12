@@ -11,6 +11,8 @@ canvas
 {
     border-radius: 10px;
     border: solid black 5px;
+    /* width:75vh;
+    height: 75vh; */
 }
 #fps
 {

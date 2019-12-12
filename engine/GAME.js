@@ -10,7 +10,7 @@ let GAME = {
 
 			this.vx = 0;
 			this.vy = 0;
-			
+
 			this.ax = 0;
 			this.ay = 0;
 
@@ -30,9 +30,15 @@ let GAME = {
 		x: 0,
 		y: 0
 	},
-	render: function(ob) {
-		let scalex = this.canvas.width / window.innerWidth;
-		let scaley = this.canvas.height / window.innerHeight;
+	render: function(ob, dt) {
+		ob.vx += ob.ax * dt;
+		ob.vy += ob.ay * dt;
+
+		ob.x += ob.vx * dt;
+		ob.y += ob.vy * dt;
+
+		let scalex = this.canvas.width / 1000;
+		let scaley = this.canvas.height / 1000;
 
 		let kx = -this.camera.x + ob.x + this.canvas.width / 2;
 		let ky = this.camera.y + ob.y + this.canvas.height / 2;
@@ -40,10 +46,7 @@ let GAME = {
 		this.ctx.fillStyle = "#ab7def";
 
 		this.ctx.beginPath();
-		this.ctx.moveTo(
-			ob.points[0].x * scalex + kx,
-			ob.points[0].y * scaley + ky
-		);
+		this.ctx.moveTo(ob.points[0].x * scalex + kx, ob.points[0].y * scaley + ky);
 
 		for (i = 1; i < ob.points.length; i++) {
 			this.ctx.lineTo(
@@ -51,18 +54,9 @@ let GAME = {
 				ob.points[i].y * scaley + ky
 			);
 		}
-
 		this.ctx.fill();
 	},
-	update: function(ob, dt) {
-		ob.vx += ob.ax * dt;
-		ob.vy += ob.ay * dt;
-
-		ob.x += ob.vx * dt;
-		ob.y += ob.vy * dt;
-	},
 	controller: class {
-		 
 		constructor(left, right, up, down) {
 			this.left = left;
 			this.right = right;
@@ -73,11 +67,10 @@ let GAME = {
 			this.leftPressed = false;
 			this.upPressed = false;
 			this.downPressed = false;
-			
-			let ob=this;
+
+			let ob = this;
 			document.addEventListener("keydown", ControllerDown, false);
 			document.addEventListener("keyup", ControllerUp, false);
-			console.log(this);
 			function ControllerDown(event) {
 				if (event.key == ob.right) {
 					ob.rightPressed = true;

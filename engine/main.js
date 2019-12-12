@@ -10,7 +10,7 @@ let fpsTime = 0,
 
 canvas = document.getElementById("display");
 GAME.renderer(canvas);
-control = new GAME.controller('a', 'd', 'w', 's');//left,right,up,down
+control = new GAME.controller("a", "d", "w", "s"); //left,right,up,down
 hero = new GAME.object("square", 100);
 hero1 = new GAME.object("square", 10);
 hero2 = new GAME.object("square", 200);
@@ -64,26 +64,16 @@ function gameloop(TimeStamp) {
 
 	if (hero3.x > 250) hero3.x = -250;
 
-	GAME.update(hero, dt);
-	GAME.update(hero1, dt);
-	GAME.update(hero2, dt);
-	GAME.update(hero3, dt);
+	//console.log(control.upPressed);
+	if (control.leftPressed) GAME.camera.x -= 0.1 * dt;
+	if (control.rightPressed) GAME.camera.x += 0.1 * dt;
+	if (control.upPressed) GAME.camera.y += 0.1 * dt;
+	if (control.downPressed) GAME.camera.y -= 0.1 * dt;
 
-  //console.log(control.upPressed);
-	if (control.leftPressed)
-	GAME.camera.x-=0.1*dt;
-	if (control.rightPressed)
-	GAME.camera.x+=0.1*dt;
-	if (control.upPressed)
-	GAME.camera.y+=0.1*dt;
-	if (control.downPressed)
-	GAME.camera.y-=0.1*dt;
-	
-
-	GAME.render(hero);
-	GAME.render(hero1);
-	GAME.render(hero2);
-	GAME.render(hero3);
+	GAME.render(hero, dt);
+	GAME.render(hero1, dt);
+	GAME.render(hero2, dt);
+	GAME.render(hero3, dt);
 
 	window.requestAnimationFrame(gameloop);
 }
