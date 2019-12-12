@@ -16,6 +16,8 @@ hero1 = new GAME.object("square", 10);
 hero2 = new GAME.object("square", 200);
 hero3 = new GAME.object("square", 75);
 
+villain = new GAME.object("square", 50);
+
 // console.log(hero);
 
 function gameloop(TimeStamp) {
@@ -60,16 +62,30 @@ function gameloop(TimeStamp) {
 
 	if (hero1.x > 250) hero1.x = -250;
 
-	if (hero2.x > 250) hero2.x = -250;
+	if (hero2.y > 250) hero2.y = -250;
 
 	if (hero3.x > 250) hero3.x = -250;
 
 	//console.log(control.upPressed);
-	if (control.leftPressed) GAME.camera.x -= 0.1 * dt;
-	if (control.rightPressed) GAME.camera.x += 0.1 * dt;
-	if (control.upPressed) GAME.camera.y += 0.1 * dt;
-	if (control.downPressed) GAME.camera.y -= 0.1 * dt;
+	if (control.leftPressed) {
+		GAME.camera.x -= 0.1 * dt;
+		villain.x -= 0.1 * dt;
+	}
+	if (control.rightPressed) {
+		GAME.camera.x += 0.1 * dt;
+		villain.x += 0.1 * dt;
+	}
+	if (control.upPressed) {
+		GAME.camera.y += 0.1 * dt;
+		villain.y += 0.1 * dt;
+	}
 
+	if (control.downPressed) {
+		GAME.camera.y -= 0.1 * dt;
+		villain.y -= 0.1 * dt;
+	}
+
+	GAME.render(villain, dt);
 	GAME.render(hero, dt);
 	GAME.render(hero1, dt);
 	GAME.render(hero2, dt);
