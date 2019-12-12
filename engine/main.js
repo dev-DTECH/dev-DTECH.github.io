@@ -10,7 +10,7 @@ let fpsTime = 0,
 
 canvas = document.getElementById("display");
 GAME.renderer(canvas);
-control = new GAME.controller(65, 68, 87, 83);
+control = new GAME.controller('a', 'd', 'w', 's');//left,right,up,down
 hero = new GAME.object("square", 100);
 hero1 = new GAME.object("square", 10);
 hero2 = new GAME.object("square", 200);
@@ -69,7 +69,16 @@ function gameloop(TimeStamp) {
 	GAME.update(hero2, dt);
 	GAME.update(hero3, dt);
 
-	if (control.leftPressed) console.log("left");
+  //console.log(control.upPressed);
+	if (control.leftPressed)
+	GAME.camera.x-=0.1*dt;
+	if (control.rightPressed)
+	GAME.camera.x+=0.1*dt;
+	if (control.upPressed)
+	GAME.camera.y+=0.1*dt;
+	if (control.downPressed)
+	GAME.camera.y-=0.1*dt;
+	
 
 	GAME.render(hero);
 	GAME.render(hero1);
