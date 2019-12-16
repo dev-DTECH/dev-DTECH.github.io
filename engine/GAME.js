@@ -1,3 +1,5 @@
+// import Collisions from 'node_module/collisions';
+// const system = new Collisions();
 let GAME = {
 	renderer: function(getcanvas) {
 		this.canvas = getcanvas;
@@ -16,35 +18,91 @@ let GAME = {
 
 			if (str == "square")
 				this.points = [
-					{ x: a, y: a },
-					{ x: a, y: -a },
-					{ x: -a, y: -a },
-					{ x: -a, y: a }
+					{x:a, y:a},
+					{x:-a, y:a},
+					{x:-a, y:-a},
+					{x:a,y: -a}
 				];
+			this.polygon =new SAT.Polygon({x:this.x,y:this.y},this.points)
 		}
-		addpoint(a, b) {
-			this.points.push({ x: a, y: b });
+		addpoint(x, y) {
+			let find_angle = function(x, y) {
+				if(x>0&&y>0)
+				return Math.atan2(y,x)* 180 / Math.PI;
+				if(x<0&&y>0)
+				return Math.atan2(y,x)* 180 / Math.PI;
+				if(x>0&&y<0)
+				return (Math.PI*2+Math.atan2(y,x))* 180 / Math.PI;
+				if(x<0&&y<0)
+				return (Math.PI*2+Math.atan2(y,x))* 180 / Math.PI;
+				if(x==0)
+				{
+					if(y>0)
+					return 90
+					else
+					return 270
+				}
+				if(y==0)
+				{
+					if(x>0)
+					return 0
+					else
+					return 180
+				}
+				// return  (y >= 0&&x>=0 ? Math.atan2(y,x) : Math.abs(Math.atan2(y,x)))* 180 / Math.PI;
+			}
+			
+			let angle, angle1, angle2;
+
+			angle = find_angle(x,y);
+
+			for (let i = 0; i < this.points.length-1 ; i++) {
+				angle1 = find_angle(this.points[i].x, this.points[i].y);
+				angle2 = find_angle(this.points[i + 1].x, this.points[i + 1].y);
+				console.log(angle);
+				console.log(angle1);
+				console.log(angle2);
+
+				if (angle >= angle1 && angle <= angle2) {
+					for (let j = this.points.length - 1; j > i; j--) {
+						this.points[j + 1] = this.points[j];
+					}
+					this.points[i+1] = [x, y];
+					break;
+				}
+				// angle1 = find_angle(this.points[0].x, this.points[0][1]);
+				// angle2 = find_angle(
+				// 	this.points[this.points.length - 1][0],
+				// 	this.points[this.points.length - 1][1]
+				// );
+
+				// if (angle <= angle1 && angle >= angle2) {
+				// 	this.points[this.points.length] = [x, y];
+				// 	break;
+				// }
+			}
 		}
 	},
-	wall:{
-		
+	collisionsBetween: function(ob1,ob2){
+		return SAT.testPolygonPolygon(ob1.polygon, ob2.polygon, new SAT.Response())
 	},
+	wall: {},
 	camera: {
 		x: 0,
 		y: 0,
 
-		vx:0,
-		vy:0,
+		vx: 0,
+		vy: 0,
 
-		ax:0,
-		ay:0
+		ax: 0,
+		ay: 0
 	},
 	render: function(ob, dt) {
 		this.camera.vx += this.camera.ax * dt;
 		this.camera.vy += this.camera.ay * dt;
 
 		this.camera.x += this.camera.vx * dt;
-		this.camera.y += this.camera.vy * dt;			
+		this.camera.y += this.camera.vy * dt;
 
 		ob.vx += ob.ax * dt;
 		ob.vy += ob.ay * dt;
@@ -52,8 +110,18 @@ let GAME = {
 		ob.x += ob.vx * dt;
 		ob.y += ob.vy * dt;
 
+		// ob.polygon.pos.x = ob.x;
+		// ob.polygon.pos.y = ob.y;
+
+		// for(let i=0;i<ob.polygon.points.length;i++){
+		// 	ob.polygon.points[i].x =ob.x+ob.points[i].x;
+		// 	ob.polygon.points[i].y =ob.y+ob.points[i].y;
+
+		// }
+		
+
 		let scalex = this.canvas.width / 1000;
-		let scaley = this.canvas.height / 1000;
+		let scale = this.canvas.height / 1000;
 
 		let kx = -this.camera.x + ob.x + this.canvas.width / 2;
 		let ky = this.camera.y - ob.y + this.canvas.height / 2;
@@ -61,12 +129,15 @@ let GAME = {
 		this.ctx.fillStyle = "#ab7def";
 
 		this.ctx.beginPath();
-		this.ctx.moveTo(ob.points[0].x * scalex + kx, ob.points[0].y * scaley + ky);
+		this.ctx.moveTo(
+			ob.points[0].x * scale + kx,
+			-ob.points[0].y * scale + ky
+		);
 
 		for (i = 1; i < ob.points.length; i++) {
 			this.ctx.lineTo(
-				ob.points[i].x * scalex + kx,
-				ob.points[i].y * scaley + ky
+				ob.points[i].x * scale + kx,
+				-ob.points[i].y * scale + ky
 			);
 		}
 		this.ctx.fill();
@@ -112,4 +183,29 @@ let GAME = {
 			}
 		}
 	}
-};
+}
+let find_angle = function(x, y) {
+	if(x>0&&y>0)
+	return Math.atan2(y,x)* 180 / Math.PI;
+	if(x<0&&y>0)
+	return Math.atan2(y,x)* 180 / Math.PI;
+	if(x>0&&y<0)
+	return (Math.PI*2+Math.atan2(y,x))* 180 / Math.PI;
+	if(x<0&&y<0)
+	return (Math.PI*2+Math.atan2(y,x))* 180 / Math.PI;
+	if(x==0)
+	{
+		if(y>0)
+		return 90
+		else
+		return 270
+	}
+	if(y==0)
+	{
+		if(x>0)
+		return 0
+		else
+		return 180
+	}
+	// return  (y >= 0&&x>=0 ? Math.atan2(y,x) : Math.abs(Math.atan2(y,x)))* 180 / Math.PI;
+}
