@@ -66,8 +66,12 @@ let GAME = {
 				if (angle >= angle1 && angle <= angle2) {
 					for (let j = this.points.length - 1; j > i; j--) {
 						this.points[j + 1] = this.points[j];
+						// this.polygon.points[j+1]=this.polygon.points[j]
 					}
-					this.points[i+1] = [x, y];
+					this.points[i+1] = {x:x, y:y};
+					// this.polygon.points[i+1] = {x:x, y:y};
+
+
 					break;
 				}
 				// angle1 = find_angle(this.points[0].x, this.points[0][1]);
@@ -81,10 +85,14 @@ let GAME = {
 				// 	break;
 				// }
 			}
+			this.polygon =new SAT.Polygon({x:this.x,y:this.y},this.points)
+
 		}
 	},
+	Response: new SAT.Response()
+	,
 	collisionsBetween: function(ob1,ob2){
-		return SAT.testPolygonPolygon(ob1.polygon, ob2.polygon, new SAT.Response())
+		return SAT.testPolygonPolygon(ob1.polygon, ob2.polygon, GAME.Response)
 	},
 	wall: {},
 	camera: {
@@ -98,6 +106,7 @@ let GAME = {
 		ay: 0
 	},
 	render: function(ob, dt) {
+		GAME.Response.clear();
 		this.camera.vx += this.camera.ax * dt;
 		this.camera.vy += this.camera.ay * dt;
 
@@ -110,8 +119,10 @@ let GAME = {
 		ob.x += ob.vx * dt;
 		ob.y += ob.vy * dt;
 
-		// ob.polygon.pos.x = ob.x;
-		// ob.polygon.pos.y = ob.y;
+		// ob.polygon.translate(ob.vx * dt, ob.vy * dt)
+
+		ob.polygon.pos.x = ob.x;
+		ob.polygon.pos.y = ob.y;
 
 		// for(let i=0;i<ob.polygon.points.length;i++){
 		// 	ob.polygon.points[i].x =ob.x+ob.points[i].x;
@@ -121,7 +132,7 @@ let GAME = {
 		
 
 		let scalex = this.canvas.width / 1000;
-		let scale = this.canvas.height / 1000;
+		let scale = 1//this.canvas.height / 1000;
 
 		let kx = -this.camera.x + ob.x + this.canvas.width / 2;
 		let ky = this.camera.y - ob.y + this.canvas.height / 2;

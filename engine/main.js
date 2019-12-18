@@ -11,12 +11,12 @@ let fpsTime = 0,
 canvas = document.getElementById("display");
 GAME.renderer(canvas);
 control = new GAME.controller("a", "d", "w", "s"); //left,right,up,down
-hero = new GAME.object("square", 100);
-hero1 = new GAME.object("square", 10);
-hero2 = new GAME.object("square", 200);
-hero3 = new GAME.object("square", 75);
+hero = new GAME.object("square", 10);
+hero1 = new GAME.object("square", 1);
+hero2 = new GAME.object("square", 20);
+hero3 = new GAME.object("square", 7.5);
 
-villain = new GAME.object("square", 50);
+villain = new GAME.object("square", 5);
 
 // console.log(hero);
 
@@ -90,9 +90,9 @@ function gameloop(TimeStamp) {
 
 	GAME.render(villain, dt);
 	GAME.render(hero, dt);
-	GAME.render(hero1, dt);
-	GAME.render(hero2, dt);
-	GAME.render(hero3, dt);
+	// GAME.render(hero1, dt);
+	// GAME.render(hero2, dt);
+	// GAME.render(hero3, dt);
 
 	window.requestAnimationFrame(gameloop);
 }
