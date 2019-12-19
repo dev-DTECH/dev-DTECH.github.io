@@ -242,46 +242,6 @@
     return Math.sqrt(this.len2());
   };
 
-  // ## Circle
-  //
-  // Represents a circle with a position and a radius.
-
-  // Create a new circle, optionally passing in a position and/or radius. If no position
-  // is given, the circle will be at `(0,0)`. If no radius is provided, the circle will
-  // have a radius of `0`.
-  /**
-   * @param {Vector=} pos A vector representing the position of the center of the circle
-   * @param {?number=} r The radius of the circle
-   * @constructor
-   */
-  function Circle(pos, r) {
-    this['pos'] = pos || new Vector();
-    this['r'] = r || 0;
-    this['offset'] = new Vector();
-  }
-  SAT['Circle'] = Circle;
-
-  // Compute the axis-aligned bounding box (AABB) of this Circle.
-  //
-  // Note: Returns a _new_ `Polygon` each time you call this.
-  /**
-   * @return {Polygon} The AABB
-   */
-  Circle.prototype['getAABB'] = Circle.prototype.getAABB = function() {
-    var r = this['r'];
-    var corner = this['pos'].clone().add(this['offset']).sub(new Vector(r, r));
-    return new Box(corner, r*2, r*2).toPolygon();
-  };
-
-  // Set the current offset to apply to the radius.
-  /**
-   * @param {Vector} offset The new offset vector.
-   * @return {Circle} This for chaining.
-   */
-  Circle.prototype['setOffset'] = Circle.prototype.setOffset = function(offset) {
-    this['offset'] = offset;
-    return this;
-  };
 
   // ## Polygon
   //
@@ -530,35 +490,7 @@
    * @param {?number=} h The height of the box.
    * @constructor
    */
-  function Box(pos, w, h) {
-    this['pos'] = pos || new Vector();
-    this['w'] = w || 0;
-    this['h'] = h || 0;
-  }
-  SAT['Box'] = Box;
 
-  // Returns a polygon whose edges are the same as this box.
-  /**
-   * @return {Polygon} A new Polygon that represents this box.
-   */
-  Box.prototype['toPolygon'] = Box.prototype.toPolygon = function() {
-    var pos = this['pos'];
-    var w = this['w'];
-    var h = this['h'];
-    return new Polygon(new Vector(pos['x'], pos['y']), [
-     new Vector(), new Vector(w, 0),
-     new Vector(w,h), new Vector(0,h)
-    ]);
-  };
-
-  // ## Response
-  //
-  // An object representing the result of an intersection. Contains:
-  //  - The two objects participating in the intersection
-  //  - The vector representing the minimum change necessary to extract the first object
-  //    from the second one (as well as a unit vector in that direction and the magnitude
-  //    of the overlap)
-  //  - Whether the first object is entirely inside the second, and vice versa.
   /**
    * @constructor
    */
@@ -612,7 +544,7 @@
   /**
    * @type {Polygon}
    */
-  var TEST_POINT = new Box(new Vector(), 0.000001, 0.000001).toPolygon();
+  // var TEST_POINT = new Box(new Vector(), 0.000001, 0.000001).toPolygon();
 
   // ## Helper Functions
 
@@ -794,208 +726,7 @@
   }
   SAT['pointInPolygon'] = pointInPolygon;
 
-  // Check if two circles collide.
-  /**
-   * @param {Circle} a The first circle.
-   * @param {Circle} b The second circle.
-   * @param {Response=} response Response object (optional) that will be populated if
-   *   the circles intersect.
-   * @return {boolean} true if the circles intersect, false if they don't.
-   */
-  function testCircleCircle(a, b, response) {
-    // Check if the distance between the centers of the two
-    // circles is greater than their combined radius.
-    var differenceV = T_VECTORS.pop().copy(b['pos']).add(b['offset']).sub(a['pos']).sub(a['offset']);
-    var totalRadius = a['r'] + b['r'];
-    var totalRadiusSq = totalRadius * totalRadius;
-    var distanceSq = differenceV.len2();
-    // If the distance is bigger than the combined radius, they don't intersect.
-    if (distanceSq > totalRadiusSq) {
-      T_VECTORS.push(differenceV);
-      return false;
-    }
-    // They intersect.  If we're calculating a response, calculate the overlap.
-    if (response) {
-      var dist = Math.sqrt(distanceSq);
-      response['a'] = a;
-      response['b'] = b;
-      response['overlap'] = totalRadius - dist;
-      response['overlapN'].copy(differenceV.normalize());
-      response['overlapV'].copy(differenceV).scale(response['overlap']);
-      response['aInB']= a['r'] <= b['r'] && dist <= b['r'] - a['r'];
-      response['bInA'] = b['r'] <= a['r'] && dist <= a['r'] - b['r'];
-    }
-    T_VECTORS.push(differenceV);
-    return true;
-  }
-  SAT['testCircleCircle'] = testCircleCircle;
-
-  // Check if a polygon and a circle collide.
-  /**
-   * @param {Polygon} polygon The polygon.
-   * @param {Circle} circle The circle.
-   * @param {Response=} response Response object (optional) that will be populated if
-   *   they interset.
-   * @return {boolean} true if they intersect, false if they don't.
-   */
-  function testPolygonCircle(polygon, circle, response) {
-    // Get the position of the circle relative to the polygon.
-    var circlePos = T_VECTORS.pop().copy(circle['pos']).add(circle['offset']).sub(polygon['pos']);
-    var radius = circle['r'];
-    var radius2 = radius * radius;
-    var points = polygon['calcPoints'];
-    var len = points.length;
-    var edge = T_VECTORS.pop();
-    var point = T_VECTORS.pop();
-
-    // For each edge in the polygon:
-    for (var i = 0; i < len; i++) {
-      var next = i === len - 1 ? 0 : i + 1;
-      var prev = i === 0 ? len - 1 : i - 1;
-      var overlap = 0;
-      var overlapN = null;
-
-      // Get the edge.
-      edge.copy(polygon['edges'][i]);
-      // Calculate the center of the circle relative to the starting point of the edge.
-      point.copy(circlePos).sub(points[i]);
-
-      // If the distance between the center of the circle and the point
-      // is bigger than the radius, the polygon is definitely not fully in
-      // the circle.
-      if (response && point.len2() > radius2) {
-        response['aInB'] = false;
-      }
-
-      // Calculate which Voronoi region the center of the circle is in.
-      var region = voronoiRegion(edge, point);
-      // If it's the left region:
-      if (region === LEFT_VORONOI_REGION) {
-        // We need to make sure we're in the RIGHT_VORONOI_REGION of the previous edge.
-        edge.copy(polygon['edges'][prev]);
-        // Calculate the center of the circle relative the starting point of the previous edge
-        var point2 = T_VECTORS.pop().copy(circlePos).sub(points[prev]);
-        region = voronoiRegion(edge, point2);
-        if (region === RIGHT_VORONOI_REGION) {
-          // It's in the region we want.  Check if the circle intersects the point.
-          var dist = point.len();
-          if (dist > radius) {
-            // No intersection
-            T_VECTORS.push(circlePos);
-            T_VECTORS.push(edge);
-            T_VECTORS.push(point);
-            T_VECTORS.push(point2);
-            return false;
-          } else if (response) {
-            // It intersects, calculate the overlap.
-            response['bInA'] = false;
-            overlapN = point.normalize();
-            overlap = radius - dist;
-          }
-        }
-        T_VECTORS.push(point2);
-      // If it's the right region:
-      } else if (region === RIGHT_VORONOI_REGION) {
-        // We need to make sure we're in the left region on the next edge
-        edge.copy(polygon['edges'][next]);
-        // Calculate the center of the circle relative to the starting point of the next edge.
-        point.copy(circlePos).sub(points[next]);
-        region = voronoiRegion(edge, point);
-        if (region === LEFT_VORONOI_REGION) {
-          // It's in the region we want.  Check if the circle intersects the point.
-          var dist = point.len();
-          if (dist > radius) {
-            // No intersection
-            T_VECTORS.push(circlePos);
-            T_VECTORS.push(edge);
-            T_VECTORS.push(point);
-            return false;
-          } else if (response) {
-            // It intersects, calculate the overlap.
-            response['bInA'] = false;
-            overlapN = point.normalize();
-            overlap = radius - dist;
-          }
-        }
-      // Otherwise, it's the middle region:
-      } else {
-        // Need to check if the circle is intersecting the edge,
-        // Change the edge into its "edge normal".
-        var normal = edge.perp().normalize();
-        // Find the perpendicular distance between the center of the
-        // circle and the edge.
-        var dist = point.dot(normal);
-        var distAbs = Math.abs(dist);
-        // If the circle is on the outside of the edge, there is no intersection.
-        if (dist > 0 && distAbs > radius) {
-          // No intersection
-          T_VECTORS.push(circlePos);
-          T_VECTORS.push(normal);
-          T_VECTORS.push(point);
-          return false;
-        } else if (response) {
-          // It intersects, calculate the overlap.
-          overlapN = normal;
-          overlap = radius - dist;
-          // If the center of the circle is on the outside of the edge, or part of the
-          // circle is on the outside, the circle is not fully inside the polygon.
-          if (dist >= 0 || overlap < 2 * radius) {
-            response['bInA'] = false;
-          }
-        }
-      }
-
-      // If this is the smallest overlap we've seen, keep it.
-      // (overlapN may be null if the circle was in the wrong Voronoi region).
-      if (overlapN && response && Math.abs(overlap) < Math.abs(response['overlap'])) {
-        response['overlap'] = overlap;
-        response['overlapN'].copy(overlapN);
-      }
-    }
-
-    // Calculate the final overlap vector - based on the smallest overlap.
-    if (response) {
-      response['a'] = polygon;
-      response['b'] = circle;
-      response['overlapV'].copy(response['overlapN']).scale(response['overlap']);
-    }
-    T_VECTORS.push(circlePos);
-    T_VECTORS.push(edge);
-    T_VECTORS.push(point);
-    return true;
-  }
-  SAT['testPolygonCircle'] = testPolygonCircle;
-
-  // Check if a circle and a polygon collide.
-  //
-  // **NOTE:** This is slightly less efficient than polygonCircle as it just
-  // runs polygonCircle and reverses everything at the end.
-  /**
-   * @param {Circle} circle The circle.
-   * @param {Polygon} polygon The polygon.
-   * @param {Response=} response Response object (optional) that will be populated if
-   *   they interset.
-   * @return {boolean} true if they intersect, false if they don't.
-   */
-  function testCirclePolygon(circle, polygon, response) {
-    // Test the polygon against the circle.
-    var result = testPolygonCircle(polygon, circle, response);
-    if (result && response) {
-      // Swap A and B in the response.
-      var a = response['a'];
-      var aInB = response['aInB'];
-      response['overlapN'].reverse();
-      response['overlapV'].reverse();
-      response['a'] = response['b'];
-      response['b'] = a;
-      response['aInB'] = response['bInA'];
-      response['bInA'] = aInB;
-    }
-    return result;
-  }
-  SAT['testCirclePolygon'] = testCirclePolygon;
-
-  // Checks whether polygons collide.
+  
   /**
    * @param {Polygon} a The first polygon.
    * @param {Polygon} b The second polygon.

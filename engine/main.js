@@ -8,6 +8,8 @@ let fpsTime = 0,
 	Time = 0,
 	LastTime = 0;
 
+	let output = document.getElementById("output");
+
 canvas = document.getElementById("display");
 GAME.renderer(canvas);
 control = new GAME.controller("a", "d", "w", "s"); //left,right,up,down
@@ -64,7 +66,7 @@ function gameloop(TimeStamp) {
 
 	if (hero2.y > 250) hero2.y = -250;
 
-	if (hero3.x > 250) hero3.x = -250;
+	if (hero3.x > 250) {hero3.x = -250;hero3.y = -250;}
 
 	//console.log(control.upPressed);
 	if (control.leftPressed) {
@@ -85,14 +87,17 @@ function gameloop(TimeStamp) {
 		villain.y -= 0.1 * dt;
 	}
 
-	if(GAME.collisionsBetween(villain,hero))
-	console.log("i just got hit")
+	if(GAME.collisionsBetween(villain,hero2))
+	output.innerHTML="i just got hit";
+	else
+	output.innerHTML="";
+
 
 	GAME.render(villain, dt);
 	GAME.render(hero, dt);
-	// GAME.render(hero1, dt);
-	// GAME.render(hero2, dt);
-	// GAME.render(hero3, dt);
+	GAME.render(hero1, dt);
+	GAME.render(hero2, dt);
+	GAME.render(hero3, dt);
 
 	window.requestAnimationFrame(gameloop);
 }

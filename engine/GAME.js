@@ -1,5 +1,6 @@
 // import Collisions from 'node_module/collisions';
 // const system = new Collisions();
+
 let GAME = {
 	renderer: function(getcanvas) {
 		this.canvas = getcanvas;
