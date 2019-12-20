@@ -5,6 +5,8 @@ let GAME = {
 	renderer: function(getcanvas) {
 		this.canvas = getcanvas;
 		this.ctx = getcanvas.getContext("2d");
+		// this.last_scale=0;
+
 	},
 	object: class {
 		constructor(str, a) {
@@ -75,16 +77,16 @@ let GAME = {
 
 					break;
 				}
-				// angle1 = find_angle(this.points[0].x, this.points[0][1]);
-				// angle2 = find_angle(
-				// 	this.points[this.points.length - 1][0],
-				// 	this.points[this.points.length - 1][1]
-				// );
+				angle1 = find_angle(this.points[0].x, this.points[0][1]);
+				angle2 = find_angle(
+					this.points[this.points.length - 1][0],
+					this.points[this.points.length - 1][1]
+				);
 
-				// if (angle <= angle1 && angle >= angle2) {
-				// 	this.points[this.points.length] = [x, y];
-				// 	break;
-				// }
+				if (angle <= angle1 && angle >= angle2) {
+					this.points[this.points.length] = [x, y];
+					break;
+				}
 			}
 			this.polygon =new SAT.Polygon({x:this.x,y:this.y},this.points)
 
@@ -107,7 +109,7 @@ let GAME = {
 		ay: 0
 	},
 	render: function(ob, dt) {
-		GAME.Response.clear();
+		// GAME.Response.clear();
 		this.camera.vx += this.camera.ax * dt;
 		this.camera.vy += this.camera.ay * dt;
 
@@ -125,6 +127,7 @@ let GAME = {
 		ob.polygon.pos.x = ob.x;
 		ob.polygon.pos.y = ob.y;
 
+
 		// for(let i=0;i<ob.polygon.points.length;i++){
 		// 	ob.polygon.points[i].x =ob.x+ob.points[i].x;
 		// 	ob.polygon.points[i].y =ob.y+ob.points[i].y;
@@ -133,7 +136,22 @@ let GAME = {
 		
 
 		let scalex = this.canvas.width / 1000;
-		let scale = 1//this.canvas.height / 1000;
+		let scale = this.canvas.height / 1000;
+		
+		// if(scale!=this.scale){
+			console.log("resizing")
+			this.scale=scale;
+			let scale_points = function(ob,scale) {
+				let ar=[];
+				for(i=0;i<ob.points.length;i++){
+					ar[i]={x:ob.points[i].x*scale,y:ob.points[i].y*scale}
+				}
+				ob.polygon= new SAT.Polygon({x:ob.x,y:ob.y},ar)
+			
+			}
+			scale_points(ob,scale);
+		// }	
+
 
 		let kx = -this.camera.x + ob.x + this.canvas.width / 2;
 		let ky = this.camera.y - ob.y + this.canvas.height / 2;
@@ -196,28 +214,11 @@ let GAME = {
 		}
 	}
 }
-let find_angle = function(x, y) {
-	if(x>0&&y>0)
-	return Math.atan2(y,x)* 180 / Math.PI;
-	if(x<0&&y>0)
-	return Math.atan2(y,x)* 180 / Math.PI;
-	if(x>0&&y<0)
-	return (Math.PI*2+Math.atan2(y,x))* 180 / Math.PI;
-	if(x<0&&y<0)
-	return (Math.PI*2+Math.atan2(y,x))* 180 / Math.PI;
-	if(x==0)
-	{
-		if(y>0)
-		return 90
-		else
-		return 270
+let scale_points = function(ob,scale) {
+	let a=[];
+	for(i=0;i<ob.points.length;i++){
+		ar[i]={x:ob.points[i].x*scale,y:ob.points[i].y*scale}
 	}
-	if(y==0)
-	{
-		if(x>0)
-		return 0
-		else
-		return 180
-	}
-	// return  (y >= 0&&x>=0 ? Math.atan2(y,x) : Math.abs(Math.atan2(y,x)))* 180 / Math.PI;
+	ob.polygon.points=ar;
+
 }

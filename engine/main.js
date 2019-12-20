@@ -3,7 +3,7 @@ let fpsTime = 0,
 	fps,
 	avgfps,
 	maxfps = 0,
-	minfps = 100000,
+	minfps = 1/0,
 	frames = 0,
 	Time = 0,
 	LastTime = 0;
@@ -13,10 +13,10 @@ let fpsTime = 0,
 canvas = document.getElementById("display");
 GAME.renderer(canvas);
 control = new GAME.controller("a", "d", "w", "s"); //left,right,up,down
-hero = new GAME.object("square", 10);
-hero1 = new GAME.object("square", 1);
-hero2 = new GAME.object("square", 20);
-hero3 = new GAME.object("square", 7.5);
+hero = new GAME.object("square", 100);
+hero1 = new GAME.object("square", 10);
+hero2 = new GAME.object("square", 200);
+hero3 = new GAME.object("square", 75);
 
 villain = new GAME.object("square", 5);
 
@@ -90,7 +90,7 @@ function gameloop(TimeStamp) {
 	if(GAME.collisionsBetween(villain,hero2))
 	output.innerHTML="i just got hit";
 	else
-	output.innerHTML="";
+	output.innerHTML="<br>";
 
 
 	GAME.render(villain, dt);
