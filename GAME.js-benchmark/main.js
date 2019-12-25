@@ -14,7 +14,7 @@ canvas = document.getElementById("display");
 GAME.renderer(canvas);
 control = new GAME.controller("a", "d", "w", "s"); //left,right,up,down
 
-let hero=[],n=1000
+let hero=[],n=10000
 
 for(i=0;i<n;i++)
 {
