@@ -87,7 +87,7 @@ function gameloop(TimeStamp) {
 		villain.y -= 0.1 * dt;
 	}
 
-	if(GAME.collisionsBetween(villain,hero2))
+	if(GAME.collisionsBetween(villain,hero))
 	output.innerHTML="i just got hit";
 	else
 	output.innerHTML="<br>";
@@ -98,7 +98,8 @@ function gameloop(TimeStamp) {
 	GAME.render(hero1, dt);
 	GAME.render(hero2, dt);
 	GAME.render(hero3, dt);
-
+	// console.log(event.clientX)
+	// console.log(hero.points[0])
 	window.requestAnimationFrame(gameloop);
 }
 
@@ -106,4 +107,4 @@ window.requestAnimationFrame(gameloop);
 
 // console.log(GAME);
 // console.log(control);
-
+GAME.debug(hero)

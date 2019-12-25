@@ -179,11 +179,24 @@ let GAME = {
 				this.ctx.arc(
 					ob.points[i].x * scale + kx,
 					-ob.points[i].y * scale + ky,
-					10,
+					5,
 					0,
 					2 * Math.PI
 				);
 				this.ctx.fill();
+			}
+			this.canvas.onclick=function(){
+				
+				// console.log(event.offsetX)
+				ob.points[0]={x:(event.offsetX-kx)/scale,y:-(event.offsetY-ky)/scale}
+				return false
+			}			
+
+			this.canvas.oncontextmenu=function(){
+				
+				// console.log(event.offsetX)
+				ob.addpoint((event.offsetX-kx)/scale,-(event.offsetY-ky)/scale)
+				return false
 			}
 		}
 	},
@@ -236,3 +249,4 @@ let scale_points = function(ob, scale) {
 	}
 	ob.polygon.points = ar;
 };
+
