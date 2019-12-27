@@ -120,6 +120,7 @@ let GAME = {
 
 		let scalex = this.canvas.width / 1000;
 		let scale = this.canvas.height / 1000;
+		console.log(this.canvas.height)
 
 		// if(scale!=this.scale){
 		// console.log("resizing")
@@ -179,25 +180,63 @@ let GAME = {
 				this.ctx.arc(
 					ob.points[i].x * scale + kx,
 					-ob.points[i].y * scale + ky,
-					5,
+					25 * scale,
 					0,
 					2 * Math.PI
 				);
 				this.ctx.fill();
 			}
-			this.canvas.onclick=function(){
-				
-				// console.log(event.offsetX)
-				ob.points[0]={x:(event.offsetX-kx)/scale,y:-(event.offsetY-ky)/scale}
-				return false
-			}			
+			this.ctx.fillStyle = "#00ff00";
+			this.ctx.arc(
+				ob.x * scale + kx,
+				-ob.y * scale + ky,
+				25 * scale,
+				0,
+				2 * Math.PI
+			);
+			this.ctx.fill();
+			let canvas69 = this;
+			let p;
+			this.canvas.onmousedown = function() {
+				for (i = 0; i < ob.points.length; i++) {
+					let x1 = ob.points[i].x * scale + kx;
+					let y1 = -ob.points[i].y * scale + ky;
+					let x2 = event.offsetX;
+					let y2 = event.offsetY;
+					if (
+						Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) <=
+						25 * scale
+					)
+						p = i;
+				}
+				// if(p<0)
+				// p=-1
+				canvas69.canvas.onmousemove = function() {
+					// console.log(event.offsetX)
+					// if(p>=0)
+					ob.points[p] = {
+						x: (event.offsetX - kx) / scale,
+						y: -(event.offsetY - ky) / scale
+					};
+					// 	else{
+					// 	ob.x=(event.offsetX-kx)//scale
+					// 	ob.y=-(event.offsetY-ky)//scale
+					// }
+					return false;
+				};
+			};
+			this.canvas.onmouseup = function() {
+				canvas69.canvas.onmousemove = function() {};
+			};
 
-			this.canvas.oncontextmenu=function(){
-				
+			this.canvas.oncontextmenu = function() {
 				// console.log(event.offsetX)
-				ob.addpoint((event.offsetX-kx)/scale,-(event.offsetY-ky)/scale)
-				return false
-			}
+				ob.addpoint(
+					(event.offsetX - kx) / scale,
+					-(event.offsetY - ky) / scale
+				);
+				return false;
+			};
 		}
 	},
 	controller: class {
@@ -249,4 +288,3 @@ let scale_points = function(ob, scale) {
 	}
 	ob.polygon.points = ar;
 };
-
