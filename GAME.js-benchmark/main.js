@@ -13,14 +13,17 @@ let fpsTime = 0,
 canvas = document.getElementById("display");
 GAME.renderer(canvas);
 control = new GAME.controller("a", "d", "w", "s"); //left,right,up,down
+GAME.camera.x=400
+GAME.camera.y=200
 
-let hero=[],n=10000
+let hero=[],n=500
 
 for(i=0;i<n;i++)
 {
-	hero[i]= new GAME.object('square',10)
-	hero[i].vx=Math.random()*0.01;
-	hero[i].vy=Math.random()*0.01;
+	hero[i]= new GAME.object('square',1)
+	hero[i].vx=Math.random()*0.1;
+	hero[i].vy=Math.random()*0.1;
+	hero[i].ay=-0.00001
 }
 
 // console.log(hero);
@@ -61,7 +64,7 @@ function gameloop(TimeStamp) {
 		fpsTime = 0;
 	}
 
-	GAME.ctx.clearRect(0, 0, 1000, 1000);
+	// GAME.ctx.clearRect(0, 0, 1000, 1000);
 
 	for(let i=0;i<n;i++)
 {
