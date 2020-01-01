@@ -13,16 +13,16 @@ let fpsTime = 0,
 canvas = document.getElementById("display");
 GAME.renderer(canvas);
 control = new GAME.controller("a", "d", "w", "s"); //left,right,up,down
-GAME.camera.x=400
-GAME.camera.y=200
+// GAME.camera.x=400
+// GAME.camera.y=200
 
-let hero=[],n=500
+let hero=[],n=1000
 
 for(i=0;i<n;i++)
 {
 	hero[i]= new GAME.object('square',1)
-	hero[i].vx=Math.random()*0.1;
-	hero[i].vy=Math.random()*0.1;
+	hero[i].vx=Math.random()*0.1*Math.pow(-1,Math.floor(Math.random() * 2) + 1);
+	hero[i].vy=Math.random()*0.1*Math.pow(-1,Math.floor(Math.random() * 2) + 1);
 	hero[i].ay=-0.00001
 }
 

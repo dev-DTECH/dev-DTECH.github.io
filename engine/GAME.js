@@ -12,6 +12,7 @@ let GAME = {
 	},
 	object: class {
 		constructor(str, a) {
+			// this.name=this.constructor
 			this.x = 0;
 			this.y = 0;
 
@@ -52,10 +53,12 @@ let GAME = {
 			};
 
 			let angle, angle1, angle2;
+			let angleChanged=false;
 
 			angle = find_angle(x, y);
 
 			for (let i = 0; i < this.points.length - 1; i++) {
+				
 				angle1 = find_angle(this.points[i].x, this.points[i].y);
 				angle2 = find_angle(this.points[i + 1].x, this.points[i + 1].y);
 				// console.log(angle);
@@ -63,6 +66,7 @@ let GAME = {
 				// console.log(angle2);
 
 				if (angle >= angle1 && angle <= angle2) {
+					angleChanged=true;
 					for (let j = this.points.length - 1; j > i; j--) {
 						this.points[j + 1] = this.points[j];
 						// this.polygon.points[j+1]=this.polygon.points[j]
@@ -72,17 +76,23 @@ let GAME = {
 
 					break;
 				}
-				angle1 = find_angle(this.points[0].x, this.points[0][1]);
-				angle2 = find_angle(
-					this.points[this.points.length - 1][0],
-					this.points[this.points.length - 1][1]
-				);
+				// angle1 = find_angle(this.points[0].x, this.points[0][1]);
+				// angle2 = find_angle(
+				// 	this.points[this.points.length - 1][0],
+				// 	this.points[this.points.length - 1][1]
+				// );
 
-				if (angle <= angle1 && angle >= angle2) {
-					this.points[this.points.length] = [x, y];
-					break;
-				}
+				// if (angle <= angle1 && angle >= angle2) {
+				// 	this.points[this.points.length] = [x, y];
+				// 	break;
+				// }
+				console.log(angleChanged)
+
 			}
+			if(!angleChanged)
+			this.points.push({ x: x, y: y })
+			angleChanged=false;
+
 			this.polygon = new SAT.Polygon({ x: this.x, y: this.y }, this.points);
 		}
 	},
@@ -120,7 +130,7 @@ let GAME = {
 
 		let scalex = this.canvas.width / 1000;
 		let scale = this.canvas.height / 1000;
-		console.log(this.canvas.height)
+		// console.log(this.canvas.height)
 
 		// if(scale!=this.scale){
 		// console.log("resizing")
@@ -176,23 +186,28 @@ let GAME = {
 		if (ob.debugmode) {
 			this.ctx.fillStyle = "#ff0000";
 			for (i = 0; i < ob.points.length; i++) {
+				// console.log(i+this.ctx.fillStyle)
 				this.ctx.beginPath();
 				this.ctx.arc(
 					ob.points[i].x * scale + kx,
-					-ob.points[i].y * scale + ky,
+					-ob.points[i].y * scale +ky,
 					25 * scale,
 					0,
 					2 * Math.PI
 				);
+				// this.ctx.closePath()
 				this.ctx.fill();
 			}
+			this.ctx.beginPath();
+
+
 			this.ctx.fillStyle = "#00ff00";
 			this.ctx.arc(
-				ob.x * scale + kx,
-				-ob.y * scale + ky,
+				kx,
+				ky,
 				25 * scale,
 				0,
-				2 * Math.PI
+				2* Math.PI
 			);
 			this.ctx.fill();
 			let canvas69 = this;
@@ -209,19 +224,29 @@ let GAME = {
 					)
 						p = i;
 				}
-				// if(p<0)
-				// p=-1
+				let x1 =  kx;
+				let y1 =  ky;
+				let x2 = event.offsetX;
+				let y2 = event.offsetY;
+				if(Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) <=
+				25 * scale)
+				p=-1
 				canvas69.canvas.onmousemove = function() {
+					// console.log({x:(event.offsetX - kx) / scale,y:-(event.offsetY - ky) / scale})
 					// console.log(event.offsetX)
-					// if(p>=0)
+					if(p>=0){
 					ob.points[p] = {
 						x: (event.offsetX - kx) / scale,
 						y: -(event.offsetY - ky) / scale
 					};
-					// 	else{
-					// 	ob.x=(event.offsetX-kx)//scale
-					// 	ob.y=-(event.offsetY-ky)//scale
-					// }
+					console.log("<ObjectName>.points["+p+"].x="+(event.offsetX - kx) / scale)
+					console.log("<ObjectName>.points["+p+"].y="+-(event.offsetY - ky) / scale)
+				console.log("Change <ObjectName> to the name of the object that you edited and put the above code in your gamedesign.js")
+				}
+						else if(p==-1){
+						// ob.x=event.offsetX-(kx-ob.x)
+						// ob.y=-event.offsetY+(ky+ob.y)
+					}
 					return false;
 				};
 			};
@@ -239,6 +264,10 @@ let GAME = {
 			};
 		}
 	},
+	clear: function(){
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+	,
 	controller: class {
 		constructor(left, right, up, down) {
 			this.left = left;

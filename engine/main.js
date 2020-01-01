@@ -57,8 +57,8 @@ function gameloop(TimeStamp) {
 		frames = 0;
 		fpsTime = 0;
 	}
-
-	GAME.ctx.clearRect(0, 0, 1000, 1000);
+	GAME.clear()
+	// GAME.ctx.clearRect(0, 0, 1000, 1000);
 
 	if (hero.x > 250) hero.x = -250;
 
@@ -103,8 +103,10 @@ function gameloop(TimeStamp) {
 	window.requestAnimationFrame(gameloop);
 }
 
+hero.x=100
+GAME.debug(hero)
 window.requestAnimationFrame(gameloop);
 
 // console.log(GAME);
 // console.log(control);
-GAME.debug(hero)
+
