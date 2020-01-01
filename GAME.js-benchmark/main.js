@@ -16,7 +16,7 @@ control = new GAME.controller("a", "d", "w", "s"); //left,right,up,down
 // GAME.camera.x=400
 // GAME.camera.y=200
 
-let hero=[],n=1000
+let hero=[],n=500
 
 for(i=0;i<n;i++)
 {
