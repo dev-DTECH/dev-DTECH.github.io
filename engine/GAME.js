@@ -86,7 +86,7 @@ let GAME = {
 				// 	this.points[this.points.length] = [x, y];
 				// 	break;
 				// }
-				console.log(angleChanged)
+				// console.log(angleChanged)
 
 			}
 			if(!angleChanged)
@@ -100,7 +100,32 @@ let GAME = {
 	collisionsBetween: function(ob1, ob2) {
 		return SAT.testPolygonPolygon(ob1.polygon, ob2.polygon, GAME.Response);
 	},
-	wall: {},
+
+
+  /////////////
+ ///concept///
+/////////////
+
+
+	// wall: function(width,height)
+	// {
+	// 	this.wall.left=new GAME.object("square",100);
+	// 	this.wall.left.x=width;
+
+	// 	this.wall.right=new GAME.object("square",100);
+	// 	this.wall.left.x=-width;
+
+	// 	this.wall.up=new GAME.object("square",100);
+	// 	this.wall.left.y=height;
+
+	// 	this.wall.down=new GAME.object("square",100);
+	// 	this.wall.left.y=-height;
+
+
+
+
+		
+	// },
 	camera: {
 		x: 0,
 		y: 0,
@@ -111,7 +136,9 @@ let GAME = {
 		ax: 0,
 		ay: 0
 	},
-	render: function(ob, dt) {
+	render: function(ob, dt,uupdate) {
+		if(uupdate==null)
+		update=true;
 		// GAME.Response.clear();
 		this.camera.vx += this.camera.ax * dt;
 		this.camera.vy += this.camera.ay * dt;
@@ -141,7 +168,7 @@ let GAME = {
 		let kx = -this.camera.x + ob.x + this.canvas.width / 2;
 		let ky = this.camera.y - ob.y + this.canvas.height / 2;
 
-		if (!ob.debugmode) {
+		if (!ob.debugmode&&update) {
 			ob.vx += ob.ax * dt;
 			ob.vy += ob.ay * dt;
 
@@ -228,6 +255,9 @@ let GAME = {
 				let y1 =  ky;
 				let x2 = event.offsetX;
 				let y2 = event.offsetY;
+
+				let px=ob.x,py=ob.y;
+
 				if(Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) <=
 				25 * scale)
 				p=-1
@@ -239,13 +269,13 @@ let GAME = {
 						x: (event.offsetX - kx) / scale,
 						y: -(event.offsetY - ky) / scale
 					};
-					console.log("<ObjectName>.points["+p+"].x="+(event.offsetX - kx) / scale)
-					console.log("<ObjectName>.points["+p+"].y="+-(event.offsetY - ky) / scale)
-				console.log("Change <ObjectName> to the name of the object that you edited and put the above code in your gamedesign.js")
+				// 	console.log("<ObjectName>.points["+p+"].x="+(event.offsetX - kx) / scale+"\n"
+				// 	+"<ObjectName>.points["+p+"].y="+-(event.offsetY - ky) / scale)
+				// console.log("Change <ObjectName> to the name of the object that you edited and put the above code in your gamedesign.js")
 				}
 						else if(p==-1){
-						// ob.x=event.offsetX-(kx-ob.x)
-						// ob.y=-event.offsetY+(ky+ob.y)
+						ob.x=px+(event.offsetX-kx)
+						ob.y=py-(event.offsetY-ky)
 					}
 					return false;
 				};
