@@ -16,7 +16,7 @@ control = new GAME.controller("a", "d", "w", "s"); //left,right,up,down
 // GAME.camera.x=400
 // GAME.camera.y=200
 
-let hero=[],n=250
+let hero=[],n=1000
 
 for(i=0;i<n;i++)
 {
@@ -72,9 +72,8 @@ function gameloop(TimeStamp) {
 	for(let i=0;i<n;i++)
 {
 	if(GAME.collisionsBetween(hero[i],wall))
-	// console.log("hit")
-	hero[i].vy=-hero[i].vy;
-	//  console.log(h)
+	hero[i].vy=Math.abs(hero[i].vy);
+	
 
 	GAME.render(hero[i],dt)
 }
