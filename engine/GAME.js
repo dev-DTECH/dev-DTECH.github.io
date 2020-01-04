@@ -121,13 +121,13 @@ let GAME = {
 			this.polygon = new SAT.Polygon({ x: this.x, y: this.y }, this.points);
 		}
 	},
-	Response: new SAT.Response(),
+	
 	collisionsBetween: function(ob1, ob2) {
-		return SAT.testPolygonPolygon(ob1.polygon, ob2.polygon, GAME.Response);
+		return SAT.testPolygonPolygon(ob1.polygon, ob2.polygon);
 	},
 
-	/////////////
-	///concept///
+	  /////////////
+	 ///concept///
 	/////////////
 
 	// wall: function(width,height)
@@ -232,6 +232,10 @@ let GAME = {
 			}
 			this.ctx.fill();
 		}
+		else
+		{
+			
+		}
 
 		if (ob.editmode) {
 			this.ctx.fillStyle = "#ff0000";
@@ -321,10 +325,11 @@ let GAME = {
 						if (
 							Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) <=
 							25 * scale
-						)
+						){
 							for (j = i; j < ob.points.length - 1; j++)
 								ob.points[j] = ob.points[j + 1];
-					}
+								ob.points[ob.points.length]={}
+					}}
 					return false;
 				}
 			};
