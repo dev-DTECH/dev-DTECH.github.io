@@ -13,7 +13,7 @@ let fpsTime = 0,
 canvas = document.getElementById("display");
 GAME.renderer(canvas);
 control = new GAME.controller("a", "d", "w", "s"); //left,right,up,down
-hero = new GAME.object("square", 100.5);
+hero = new GAME.object("square", 100);
 hero1 = new GAME.object("square", 10);
 hero2 = new GAME.object("square", 200);
 hero3 = new GAME.object("square", 75);
@@ -107,7 +107,7 @@ function gameloop(TimeStamp) {
 }
 
 hero.x=100
-GAME.debug(hero)
+GAME.edit(hero)
 window.requestAnimationFrame(gameloop);
 
 // console.log(GAME);
