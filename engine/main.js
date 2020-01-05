@@ -107,9 +107,8 @@ function gameloop(TimeStamp) {
 }
 
 hero.x=100
-GAME.edit(hero)
 window.requestAnimationFrame(gameloop);
-
+GAME.edit(hero,"hero")
 // console.log(GAME);
 // console.log(control);
 
