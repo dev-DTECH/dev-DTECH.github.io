@@ -4,22 +4,21 @@ let GAME = {
 		this.ctx = getcanvas.getContext("2d");
 		// this.last_scale=0;
 	},
-	edit: function(ob,ObjectName) {
+	edit: function(ob, ObjectName) {
 		if (!this.editing) {
 			this.editing = true;
 			ob.editmode = true;
 			ob.update = false;
 
-			if(!ObjectName)
-			this.EditingObjectName=prompt("Enter name of the object that your are editing","ObjectName")
-			
-			
-			else
-			this.EditingObjectName=ObjectName;
-			this.EditingCode="";
+			if (!ObjectName)
+				this.EditingObjectName = prompt(
+					"Enter name of the object that your are editing",
+					"ObjectName"
+				);
+			else this.EditingObjectName = ObjectName;
+			this.EditingCode = "";
 
-			return "Your are now editing "+this.EditingObjectName
-
+			return "Your are now editing " + this.EditingObjectName;
 		} else {
 			alert(
 				"You cannot edit two game object at once. Run GAME.stopediting(<ObjectName>) to stop editing the previous object."
@@ -32,21 +31,21 @@ let GAME = {
 			ob.update = true;
 			this.editing = false;
 
-			this.canvas.onmousedown={}
-			this.canvas.onmousemove={}
-			this.canvas.oncontextmenu={}
-			this.canvas.onauxclick={}
+			this.canvas.onmousedown = {};
+			this.canvas.onmousemove = {};
+			this.canvas.oncontextmenu = {};
+			this.canvas.onauxclick = {};
 
 			return this.EditingCode;
-
-
 		}
 	},
 	object: class {
-		constructor(str, a) {
+		constructor(str, a, NoOfImage) {
 			if (!a) a = 100;
 			if (!str) str = "square";
 			// this.name=this.constructor
+			this.size = a;
+
 			this.x = 0;
 			this.y = 0;
 
@@ -55,6 +54,8 @@ let GAME = {
 
 			this.ax = 0;
 			this.ay = 0;
+
+			this.colour="#ff0000"
 
 			this.update = true;
 
@@ -77,10 +78,49 @@ let GAME = {
 					{ x: -a, y: -a },
 					{ x: a, y: -a }
 				];
-				this.image = str;
+				this.image = new Image();
+				this.image.src = str;
+				console.log(this.image);
+
+				this.animation = {
+					frames: [],
+					time: 0,
+					count:0,
+					fps: 1
+				};
+				let i = 0;
+				while (i < NoOfImage) {
+					try {
+						this.animation.frames[i] = new Image();
+						this.animation.frames[i].src =
+							str.split(".")[str.split(".").length-2] + "-" + i + "." + str.split(".")[str.split(".").length-1];
+						console.log(this.animation.frames);
+						i++;
+					} catch {
+						break;
+					}
+				}
 			}
 			this.polygon = new SAT.Polygon({ x: this.x, y: this.y }, this.points);
 		}
+		animate(start,stop,fps,dt){
+			this.animation.time+=dt
+
+			if(this.animation.time>1000/fps){
+				this.animation.time=0;
+
+				this.animation.count++;
+
+				if(this.animation.count>this.animation.frames.length){
+				this.animation.count=0
+					
+				}
+
+			}
+			this.image=this.animation.frames[this.animation.count]
+
+		}
+
 		addpoint(x, y) {
 			let find_angle = function(x, y) {
 				if (x > 0 && y > 0) return (Math.atan2(y, x) * 180) / Math.PI;
@@ -140,20 +180,19 @@ let GAME = {
 
 			this.polygon = new SAT.Polygon({ x: this.x, y: this.y }, this.points);
 		}
-		deletepoint(n){
+		deletepoint(n) {
 			for (let j = n; j < this.points.length - 1; j++)
-								this.points[j] = this.points[j + 1];
-								this.points[this.points.length]={}
+				this.points[j] = this.points[j + 1];
+			this.points[this.points.length] = {};
 		}
 	},
-	
-	
+
 	collisionsBetween: function(ob1, ob2) {
 		return SAT.testPolygonPolygon(ob1.polygon, ob2.polygon);
 	},
 
-	  /////////////
-	 ///concept///
+	/////////////
+	///concept///
 	/////////////
 
 	// wall: function(width,height)
@@ -182,7 +221,7 @@ let GAME = {
 		ay: 0
 	},
 	render: function(ob, dt, uupdate) {
-		if (uupdate == null) update = true;
+		// if (uupdate == null) update = true;
 		// GAME.Response.clear();
 		this.camera.vx += this.camera.ax * dt;
 		this.camera.vy += this.camera.ay * dt;
@@ -209,8 +248,8 @@ let GAME = {
 
 		// }
 
-		let kx = -this.camera.x + ob.x + this.canvas.width / 2;
-		let ky = this.camera.y - ob.y + this.canvas.height / 2;
+		let kx = -this.camera.x * scale + ob.x * scale + this.canvas.width / 2;
+		let ky = this.camera.y * scale - ob.y * scale + this.canvas.height / 2;
 
 		if (ob.update) {
 			ob.vx += ob.ax * dt;
@@ -229,8 +268,8 @@ let GAME = {
 		// 	ob.polygon.points[i].x =ob.x+ob.points[i].x;
 		// 	ob.polygon.points[i].y =ob.y+ob.points[i].y;
 		// }
-		if (ob.type == "square" || ob.type == "circle") {
-			this.ctx.fillStyle = "#ab7def";
+		if (ob.type == "square") {
+			this.ctx.fillStyle = ob.colour;
 
 			this.ctx.beginPath();
 			this.ctx.moveTo(
@@ -257,13 +296,53 @@ let GAME = {
 				// this.ctx.beginPath();	}
 			}
 			this.ctx.fill();
-		}
-		else
-		{
-			
+		} 
+		else if (ob.type == "circle") {
+		} else {
+			this.ctx.drawImage(
+				ob.image,
+				0,
+				0,
+				ob.image.width,
+				ob.image.height,
+				kx - (ob.image.width / 2) *ob.size*scale/100,
+				ky - (ob.image.height / 2) * ob.size*scale/100,
+				ob.image.width * ob.size*scale/100,
+				ob.image.height *ob.size* scale/100
+			);
+			// console.log(ob.image.height * scale/100)
 		}
 
 		if (ob.editmode) {
+
+			this.ctx.fillStyle = "#ab7def99";
+
+			this.ctx.beginPath();
+			this.ctx.moveTo(
+				ob.points[0].x * scale + kx,
+				-ob.points[0].y * scale + ky
+			);
+			// 			if(ob.editmode){
+			// 		this.ctx.beginPath();
+			// this.ctx.arc(ob.points[0].x * scale + kx, -ob.points[0].y * scale + ky, 10, 0, 2 * Math.PI);
+			// this.ctx.fill();
+			// this.ctx.beginPath();
+
+			// }
+
+			for (i = 1; i < ob.points.length; i++) {
+				this.ctx.lineTo(
+					ob.points[i].x * scale + kx,
+					-ob.points[i].y * scale + ky
+				);
+				// 	if(ob.editmode){
+				// 		this.ctx.beginPath();
+				// this.ctx.arc(ob.points[0].x * scale + kx, -ob.points[0].y * scale + ky, 10, 0, 2 * Math.PI);
+				// this.ctx.fill();
+				// this.ctx.beginPath();	}
+			}
+			this.ctx.fill();
+
 			this.ctx.fillStyle = "#ff0000";
 			for (i = 0; i < ob.points.length; i++) {
 				// console.log(i+this.ctx.fillStyle)
@@ -305,8 +384,8 @@ let GAME = {
 				let x2 = event.offsetX;
 				let y2 = event.offsetY;
 
-				let px = ob.x,
-					py = ob.y;
+				let px = ob.x * scale,
+					py = ob.y * scale;
 
 				if (
 					Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) <=
@@ -316,29 +395,46 @@ let GAME = {
 				canvas69.canvas.onmousemove = function() {
 					// console.log({x:(event.offsetX - kx) / scale,y:-(event.offsetY - ky) / scale})
 					// console.log(event.offsetX)
-					try{
-					if (p >= 0) {
-						ob.points[p] = {
-							x: (event.offsetX - kx) / scale,
-							y: -(event.offsetY - ky) / scale
-						};
-						EditMovePoint[p]=GAME.EditingObjectName+".points["+p+"].x="+(event.offsetX - kx) / scale+";\n"+GAME.EditingObjectName+".points["+p+"].y="+-(event.offsetY - ky) / scale+";\n"
-						// 	+"<ObjectName>.points["+p+"].y="+-(event.offsetY - ky) / scale
-						// 	console.log("<ObjectName>.points["+p+"].x="+(event.offsetX - kx) / scale+"\n"
-						// 	+"<ObjectName>.points["+p+"].y="+-(event.offsetY - ky) / scale)
-						// console.log("Change <ObjectName> to the name of the object that you edited and put the above code in your gamedesign.js")
-					} else if (p == -1) {
-						ob.x = px + (event.offsetX - kx);
-						ob.y = py - (event.offsetY - ky);
-						EditMoveOrigin=GAME.EditingObjectName+".x="+(px + (event.offsetX - kx))+";\n"+GAME.EditingObjectName+".y="+-(py + (event.offsetY - ky))+";\n"
-					}
-				}
-				catch{}
+					try {
+						if (p >= 0) {
+							ob.points[p] = {
+								x: (event.offsetX - kx) / scale,
+								y: -(event.offsetY - ky) / scale
+							};
+							EditMovePoint[p] =
+								GAME.EditingObjectName +
+								".points[" +
+								p +
+								"].x=" +
+								(event.offsetX - kx) / scale +
+								";\n" +
+								GAME.EditingObjectName +
+								".points[" +
+								p +
+								"].y=" +
+								-(event.offsetY - ky) / scale +
+								";\n";
+							// 	+"<ObjectName>.points["+p+"].y="+-(event.offsetY - ky) / scale
+							// 	console.log("<ObjectName>.points["+p+"].x="+(event.offsetX - kx) / scale+"\n"
+							// 	+"<ObjectName>.points["+p+"].y="+-(event.offsetY - ky) / scale)
+							// console.log("Change <ObjectName> to the name of the object that you edited and put the above code in your gamedesign.js")
+						} else if (p == -1) {
+							ob.x = (px + (event.offsetX - kx)) / scale;
+							ob.y = (py - (event.offsetY - ky)) / scale;
+							EditMoveOrigin =
+								GAME.EditingObjectName +
+								".x=" +
+								(px + (event.offsetX - kx)) +
+								";\n" +
+								GAME.EditingObjectName +
+								".y=" +
+								-(py + (event.offsetY - ky)) +
+								";\n";
+						}
+					} catch {}
 					return false;
-
 				};
 			};
-
 
 			this.canvas.oncontextmenu = function() {
 				// console.log(event.offsetX)
@@ -346,8 +442,14 @@ let GAME = {
 					(event.offsetX - kx) / scale,
 					-(event.offsetY - ky) / scale
 				);
-				GAME.EditingCode+=GAME.EditingObjectName+".addpoint("+(event.offsetX - kx) / scale+","+-(event.offsetY - ky) / scale+");\n"
-				
+				GAME.EditingCode +=
+					GAME.EditingObjectName +
+					".addpoint(" +
+					(event.offsetX - kx) / scale +
+					"," +
+					-(event.offsetY - ky) / scale +
+					");\n";
+
 				return false;
 			};
 
@@ -361,32 +463,25 @@ let GAME = {
 						if (
 							Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) <=
 							25 * scale
-						){
-						ob.deletepoint(i)
-				GAME.EditingCode+=GAME.EditingObjectName+".deletepoint("+i+");\n"
-						
+						) {
+							ob.deletepoint(i);
+							GAME.EditingCode +=
+								GAME.EditingObjectName + ".deletepoint(" + i + ");\n";
 						}
 					}
 					return false;
 				}
 			};
 			this.canvas.onmouseup = function() {
-				canvas69.canvas.onmousemove ={};
-				try{
-					GAME.EditingCode+=EditMoveOrigin
-
-				}
-				catch{}
-				try{
-					GAME.EditingCode+=EditMovePoint
-				}
-				catch{}
-
-
-
+				canvas69.canvas.onmousemove = {};
+				try {
+					GAME.EditingCode += EditMoveOrigin;
+				} catch {}
+				try {
+					GAME.EditingCode += EditMovePoint;
+				} catch {}
 			};
 		}
-
 	},
 	clear: function() {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -433,4 +528,3 @@ let GAME = {
 		}
 	}
 };
-

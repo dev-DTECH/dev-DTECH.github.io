@@ -17,6 +17,10 @@ hero = new GAME.object("square", 100);
 hero1 = new GAME.object("square", 10);
 hero2 = new GAME.object("square", 200);
 hero3 = new GAME.object("square", 75);
+hero.colour="#4768ff"
+
+stylishhero =new GAME.object("animation/mario.png",200,3)
+
 
 villain = new GAME.object("square", 5);
 
@@ -61,31 +65,31 @@ function gameloop(TimeStamp) {
 	GAME.clear()
 	// GAME.ctx.clearRect(0, 0, 1000, 1000);
 
-	if (hero.x > 250) hero.x = -250;
+	if (hero.x > 500) hero.x = -500;
 
-	if (hero1.x > 250) hero1.x = -250;
+	if (hero1.x > 500) hero1.x = -500;
 
-	if (hero2.y > 250) hero2.y = -250;
+	if (hero2.y > 500) hero2.y = -500;
 
-	if (hero3.x > 250) {hero3.x = -250;hero3.y = -250;}
+	if (hero3.x > 500) {hero3.x = -500;hero3.y = -500;}
 
 	//console.log(control.upPressed);
 	if (control.leftPressed) {
-		GAME.camera.x -= 0.1 * dt;
-		villain.x -= 0.1 * dt;
+		GAME.camera.x -= 1 * dt;
+		villain.x -= 1 * dt;
 	}
 	if (control.rightPressed) {
-		GAME.camera.x += 0.1 * dt;
-		villain.x += 0.1 * dt;
+		GAME.camera.x += 1 * dt;
+		villain.x += 1 * dt;
 	}
 	if (control.upPressed) {
-		GAME.camera.y += 0.1 * dt;
-		villain.y += 0.1 * dt;
+		GAME.camera.y += 1 * dt;
+		villain.y += 1 * dt;
 	}
 
 	if (control.downPressed) {
-		GAME.camera.y -= 0.1 * dt;
-		villain.y -= 0.1 * dt;
+		GAME.camera.y -= 1 * dt;
+		villain.y -= 1 * dt;
 	}
 
 	if(GAME.collisionsBetween(villain,hero))
@@ -95,20 +99,24 @@ function gameloop(TimeStamp) {
 
 
 	GAME.render(villain, dt);
-	GAME.render(hero, dt,);
 	GAME.render(hero1, dt);
 	GAME.render(hero2, dt);
 	GAME.render(hero3, dt);
 
+	GAME.render(stylishhero, dt);
+	GAME.render(hero, dt,);
+
+
 	// GAME.render(GAME.wall.left,dt)
 	// console.log(event.clientX)
 	// console.log(hero.points[0])
+
 	window.requestAnimationFrame(gameloop);
 }
 
 hero.x=100
 window.requestAnimationFrame(gameloop);
-GAME.edit(hero,"hero")
+GAME.edit(stylishhero,"hero")
 // console.log(GAME);
 // console.log(control);
 
