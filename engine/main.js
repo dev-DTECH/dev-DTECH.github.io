@@ -3,7 +3,17 @@ let LastTime = 0;
 	let output = document.getElementById("output");
 
 canvas = document.getElementById("display");
-GAME.renderer(canvas);
+
+
+res =document.getElementById("res");
+
+// let res=100
+function resize()
+{
+	GAME.renderer(canvas,res.value);
+}
+resize()
+// GAME.renderer(canvas,res);
 control = new GAME.controller("a", "d", "w", "s"); //left,right,up,down
 hero = new GAME.object("square", 100);
 hero1 = new GAME.object("square", 10);
@@ -42,27 +52,40 @@ function gameloop(TimeStamp) {
 	if (control.leftPressed) {
 		GAME.camera.x -= 1 * dt;
 		villain.x -= 1 * dt;
+		stylishhero.x -= 1 * dt;
+
 	}
 	if (control.rightPressed) {
+	stylishhero.animate(0,1,5,dt)
+	stylishhero.x += 1 * dt;
+
+
 		GAME.camera.x += 1 * dt;
 		villain.x += 1 * dt;
 	}
 	if (control.upPressed) {
 		GAME.camera.y += 1 * dt;
 		villain.y += 1 * dt;
+		stylishhero.y += 1 * dt;
+
 	}
 
 	if (control.downPressed) {
 		GAME.camera.y -= 1 * dt;
 		villain.y -= 1 * dt;
+		stylishhero.y -= 1 * dt;
+
 	}
 
 	if(GAME.collisionsBetween(villain,hero))
-	output.innerHTML="i just got hit";
+	// output.innerHTML="i just got hit";
+	hero.colour="#4768ff"
+	
 	else
-	output.innerHTML="<br>";
+	hero.colour=""
 
-	stylishhero.animate(0,1,5,dt)
+	// output.innerHTML="<br>";
+
 	GAME.render(villain, dt);
 	GAME.render(hero1, dt);
 	GAME.render(hero2, dt);

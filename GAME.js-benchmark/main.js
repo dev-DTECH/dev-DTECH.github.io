@@ -3,7 +3,14 @@ let LastTime = 0;
 	let output = document.getElementById("output");
 
 canvas = document.getElementById("display");
-GAME.renderer(canvas);
+
+
+function resize()
+{
+	GAME.renderer(canvas,res.value);
+}
+resize()
+// GAME.renderer(canvas);
 control = new GAME.controller("a", "d", "w", "s"); //left,right,up,down
 GAME.camera.x=0
 GAME.camera.y=100

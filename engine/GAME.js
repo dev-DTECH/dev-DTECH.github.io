@@ -1,6 +1,13 @@
 let GAME = {
-	renderer: function(getcanvas) {
+	renderer: function(getcanvas,res) {
 		this.canvas = getcanvas;
+		this.canvas.width=window.innerWidth*(res/100)
+		this.canvas.height=window.innerHeight*(res/100)
+		let thiis=this
+		window.onresize=function(){
+			thiis.canvas.width=window.innerWidth*(res/100)
+			thiis.canvas.height=window.innerHeight*(res/100)
+		}
 		this.ctx = getcanvas.getContext("2d");
 		// this.last_scale=0;
 	},
@@ -71,6 +78,12 @@ let GAME = {
 					{ x: a, y: -a }
 				];
 			else if (str == "circle") {
+				this.points = [
+					{ x: a, y: a },
+					{ x: -a, y: a },
+					{ x: -a, y: -a },
+					{ x: a, y: -a }
+				];
 			} else {
 				this.points = [
 					{ x: a, y: a },
@@ -99,7 +112,7 @@ let GAME = {
 						break;
 					}
 				}
-				// this.image=this.animation.frames[this.animation.count]
+				this.image=this.animation.frames[0]
 
 			}
 			this.polygon = new SAT.Polygon({ x: this.x, y: this.y }, this.points);
@@ -239,8 +252,12 @@ let GAME = {
 		// 	ob.polygon = new SAT.Polygon({ x: ob.x, y: ob.y }, ar);
 		// };
 
-		let scalex = this.canvas.width / 1000;
-		let scale = this.canvas.height / 1000;
+		// let scalex = this.canvas.width / 1000;
+		if(this.canvas.height<=this.canvas.width)
+		scale = this.canvas.height / 1000;
+		else
+		scale = this.canvas.width / 1000;
+
 		// console.log(this.canvas.height)
 
 		// if(scale!=this.scale){
