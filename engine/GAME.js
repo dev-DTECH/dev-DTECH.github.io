@@ -93,7 +93,7 @@ let GAME = {
 						this.animation.frames[i] = new Image();
 						this.animation.frames[i].src =
 							str.split(".")[str.split(".").length-2] + "-" + i + "." + str.split(".")[str.split(".").length-1];
-						console.log(this.animation.frames);
+						// console.log(this.animation.frames);
 						i++;
 					} catch {
 						break;
@@ -231,13 +231,13 @@ let GAME = {
 		this.camera.y += this.camera.vy * dt;
 
 		// this.scale = scale;
-		let scale_points = function(ob, scale) {
-			let ar = [];
-			for (i = 0; i < ob.points.length; i++) {
-				ar[i] = { x: ob.points[i].x * scale, y: ob.points[i].y * scale };
-			}
-			ob.polygon = new SAT.Polygon({ x: ob.x, y: ob.y }, ar);
-		};
+		// let scale_points = function(ob, scale) {
+		// 	let ar = [];
+		// 	for (i = 0; i < ob.points.length; i++) {
+		// 		ar[i] = { x: ob.points[i].x  , y: ob.points[i].y  };
+		// 	}
+		// 	ob.polygon = new SAT.Polygon({ x: ob.x, y: ob.y }, ar);
+		// };
 
 		let scalex = this.canvas.width / 1000;
 		let scale = this.canvas.height / 1000;
@@ -245,7 +245,7 @@ let GAME = {
 
 		// if(scale!=this.scale){
 		// console.log("resizing")
-		scale_points(ob, scale);
+		// scale_points(ob, scale);
 
 		// }
 
