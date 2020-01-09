@@ -19,7 +19,7 @@ hero2 = new GAME.object("square", 200);
 hero3 = new GAME.object("square", 75);
 hero.colour="#4768ff"
 
-stylishhero =new GAME.object("animation/mario.png",200,3)
+stylishhero =new GAME.object("animation/mario.png",100,3)
 
 
 villain = new GAME.object("square", 5);
@@ -97,14 +97,14 @@ function gameloop(TimeStamp) {
 	else
 	output.innerHTML="<br>";
 
-
+	stylishhero.animate(0,1,5,dt)
 	GAME.render(villain, dt);
 	GAME.render(hero1, dt);
 	GAME.render(hero2, dt);
 	GAME.render(hero3, dt);
+	GAME.render(hero, dt,);
 
 	GAME.render(stylishhero, dt);
-	GAME.render(hero, dt,);
 
 
 	// GAME.render(GAME.wall.left,dt)
@@ -116,7 +116,7 @@ function gameloop(TimeStamp) {
 
 hero.x=100
 window.requestAnimationFrame(gameloop);
-GAME.edit(stylishhero,"hero")
+// GAME.edit(stylishhero,"hero")
 // console.log(GAME);
 // console.log(control);
 

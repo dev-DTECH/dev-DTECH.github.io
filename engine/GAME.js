@@ -79,8 +79,7 @@ let GAME = {
 					{ x: a, y: -a }
 				];
 				this.image = new Image();
-				this.image.src = str;
-				console.log(this.image);
+			
 
 				this.animation = {
 					frames: [],
@@ -100,6 +99,8 @@ let GAME = {
 						break;
 					}
 				}
+				// this.image=this.animation.frames[this.animation.count]
+
 			}
 			this.polygon = new SAT.Polygon({ x: this.x, y: this.y }, this.points);
 		}
@@ -108,16 +109,16 @@ let GAME = {
 
 			if(this.animation.time>1000/fps){
 				this.animation.time=0;
+				this.image=this.animation.frames[this.animation.count]
 
 				this.animation.count++;
 
-				if(this.animation.count>this.animation.frames.length){
+				if(this.animation.count>this.animation.frames.length-1){
 				this.animation.count=0
 					
 				}
 
 			}
-			this.image=this.animation.frames[this.animation.count]
 
 		}
 
@@ -299,6 +300,7 @@ let GAME = {
 		} 
 		else if (ob.type == "circle") {
 		} else {
+			// console.log(ob.animation.count)
 			this.ctx.drawImage(
 				ob.image,
 				0,
