@@ -1,12 +1,4 @@
-let fpsTime = 0,
-	c = 0,
-	fps,
-	avgfps,
-	maxfps = 0,
-	minfps = 1/0,
-	frames = 0,
-	Time = 0,
-	LastTime = 0;
+let LastTime = 0;
 
 	let output = document.getElementById("output");
 
@@ -33,43 +25,16 @@ wall.points[0].x=wall.points[3].x=1000
 wall.points[1].x=wall.points[2].x=-1000
 // console.log(hero);
 
+var stats = new Stats();
+stats.showPanel( 0); // 0: fps, 1: ms, 2: mb, 3+: custom
+
+document.body.appendChild( stats.dom );
 
 
 function gameloop(TimeStamp) {
+	stats.begin();
 	let dt = TimeStamp - LastTime;
 	LastTime = TimeStamp;
-	Time += dt;
-
-	frames++;
-	fpsTime += dt;
-	//console.log(fpsTime);
-	//fps=1000/dt;
-
-	if (fpsTime >= 1000) {
-		c++;
-		fps = frames;
-		if (c <= 5) avgfps = fps;
-
-		avgfps = Math.round((avgfps * c + fps) / (c + 1));
-		if (maxfps < fps) maxfps = fps;
-		if (minfps > fps && c >= 5) minfps = fps;
-		//console.log(fps);
-		document.getElementById("fps").innerHTML =
-			"FPS : " +
-			fps +
-			"<br>" +
-			"AVGFPS : " +
-			avgfps +
-			"<br>" +
-			"MAXFPS : " +
-			maxfps +
-			"<br>" +
-			"MINFPS : " +
-			minfps;
-
-		frames = 0;
-		fpsTime = 0;
-	}
 
 	GAME.clear()
 
@@ -77,7 +42,7 @@ function gameloop(TimeStamp) {
 {
 	if(GAME.collisionsBetween(hero[i],wall)){
 	hero[i].vy=Math.abs(hero[i].vy);
-		console.log("Colision")
+		// console.log("Colision")
 	}
 	hero[i].animate(0,2,10,dt)
 	
@@ -89,10 +54,8 @@ GAME.render(wall,dt)
 
 
 
-
-
-
-	window.requestAnimationFrame(gameloop);
+stats.end();
+	window.requestAnimationFrame(gameloop)
 }
 
 window.requestAnimationFrame(gameloop);

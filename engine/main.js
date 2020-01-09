@@ -1,12 +1,4 @@
-let fpsTime = 0,
-	c = 0,
-	fps,
-	avgfps,
-	maxfps = 0,
-	minfps = 1/0,
-	frames = 0,
-	Time = 0,
-	LastTime = 0;
+let LastTime = 0;
 
 	let output = document.getElementById("output");
 
@@ -26,42 +18,15 @@ villain = new GAME.object("square", 5);
 
 
 // console.log(hero);
+var stats = new Stats();
+stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild( stats.dom );
 
 function gameloop(TimeStamp) {
+	stats.begin();
 	let dt = TimeStamp - LastTime;
 	LastTime = TimeStamp;
-	Time += dt;
 
-	frames++;
-	fpsTime += dt;
-	//console.log(fpsTime);
-	//fps=1000/dt;
-
-	if (fpsTime >= 1000) {
-		c++;
-		fps = frames;
-		if (c <= 5) avgfps = fps;
-
-		avgfps = Math.round((avgfps * c + fps) / (c + 1));
-		if (maxfps < fps) maxfps = fps;
-		if (minfps > fps && c >= 5) minfps = fps;
-		//console.log(fps);
-		document.getElementById("fps").innerHTML =
-			"FPS : " +
-			fps +
-			"<br>" +
-			"AVGFPS : " +
-			avgfps +
-			"<br>" +
-			"MAXFPS : " +
-			maxfps +
-			"<br>" +
-			"MINFPS : " +
-			minfps;
-
-		frames = 0;
-		fpsTime = 0;
-	}
 	GAME.clear()
 	// GAME.ctx.clearRect(0, 0, 1000, 1000);
 
@@ -110,7 +75,7 @@ function gameloop(TimeStamp) {
 	// GAME.render(GAME.wall.left,dt)
 	// console.log(event.clientX)
 	// console.log(hero.points[0])
-
+	stats.end();
 	window.requestAnimationFrame(gameloop);
 }
 
