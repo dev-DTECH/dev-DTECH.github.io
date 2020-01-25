@@ -3,9 +3,16 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>D.TECH</title>
-        <meta name="description" content="">
+        <meta name="description" content="My name is Debdeep Pal and this is my personal website.">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="./style/ui.css">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="Weather PWA">
+        <link rel="apple-touch-icon" href="/images/logo-512x512.svg.png">
+        <meta name="theme-color" content="#abcdef" />
+
+
         <link rel='manifest' href='/manifest.webmanifest'>
     </head>
     <body>
@@ -156,5 +163,16 @@
 
         <!-- <a href="./bubblesort/index.html">BUBBLESORT</a>
         <a href="./game/index.html">GAME</a> -->
+        <script>
+          if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+        .then((reg) => {
+          console.log('Service worker registered.', reg);
+        });
+  });
+}
+        </script>
+        <script src="./install.js"></script>
     </body>
 </html>
