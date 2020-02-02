@@ -1,5 +1,11 @@
+const CACHE_NAME='D-tech-cache';
 const FILES_TO_CACHE = [
-    '/offline.html',
+    '/',
+    'index.html',
+    'style',
+    'image',
+    '3D'
+
   ];
 
   self.addEventListener('install',evt =>{

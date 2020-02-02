@@ -86,6 +86,14 @@ svg
 {
 	animation: l3 2s ease forwards ;
 } */
+#install{
+	display: inline-block;
+	position: fixed;
+	bottom: 10px;
+	right: 10px;
+	z-index: 1000;
+	padding: 5px;
+}
 @media only screen and (min-width: 600px) {
 	section:nth-child(2)
 	{
