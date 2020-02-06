@@ -36,7 +36,7 @@ a {
 	flex-direction: column;
 	align-items: center;
 	width: 50%;
-	margin: 10px;
+	margin: 25px;
 }
 label {
 	background-color: green;
@@ -46,6 +46,8 @@ label {
 	height: 50px;
 	z-index: 1;
 	width:100%;
+	/* padding-top:10px;
+	padding-bottom:10px ; */
 	transition: transform 0.25s;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
@@ -90,9 +92,10 @@ svg
 	display: inline-block;
 	position: fixed;
 	bottom: 10px;
-	right: 10px;
+	right: -100%;
 	z-index: 1000;
 	padding: 5px;
+	transition: right 0.5s;
 }
 @media only screen and (min-width: 600px) {
 	section:nth-child(2)
