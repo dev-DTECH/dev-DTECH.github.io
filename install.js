@@ -12,5 +12,4 @@ function saveBeforeInstallPromptEvent(e){
 window.addEventListener('beforeinstallprompt', saveBeforeInstallPromptEvent);
 function install(){
     deferredPrompt.prompt();
-
 }
