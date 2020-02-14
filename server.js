@@ -1,7 +1,8 @@
-let io =require('socket.io')(process.env.PORT || 3000)
-console.log("Server online")
+let express = require('express')
+let app =express()
 
-io.on('connection',socket =>{
-    console.log("user connected");
+app.use(express.static("./"))
 
-})
+app.listen(process.env.PORT || 3000 ,() =>{
+    console.log('server on fire')
+} )

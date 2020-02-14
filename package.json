@@ -2,14 +2,14 @@
   "name": "dtech-web",
   "version": "1.0.0",
   "description": "I am Debdeep Pal.Email-deep64222@gmail.com.This is my personal website.This contains all my web project that i have done till now.",
-  "main": "index.html",
+  "main": "server.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "index.html"
-
+    "start": "node server.js",
+    "devstart": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,11 @@
   "bugs": {
     "url": "https://github.com/dev-DTECH/DTECH-web/issues"
   },
-  "homepage": "https://github.com/dev-DTECH/DTECH-web#readme"
+  "homepage": "https://github.com/dev-DTECH/DTECH-web#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
