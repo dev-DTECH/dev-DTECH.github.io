@@ -1,0 +1,40 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body{
+    height: 200vh;
+}
+a{
+    text-decoration: none;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border-radius: 50%;
+}
+#search-button{
+    border-radius: 5px;
+    
+}
+#logo > img {
+    height: 40px;
+    width: 40px;
+}
+#navbar{
+    display: flex;
+    place-items: center;
+    justify-content: space-evenly;
+}
+#menu{
+    display: flex;
+}
+#menu > a{
+    margin: 10px;
+}
+#product{
+    height: 100px;
+    width: 75%;
+    margin: 10px;
+    background-color: darkslateblue;
+}
