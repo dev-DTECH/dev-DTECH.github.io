@@ -9,6 +9,9 @@ export default class Menu extends Component {
 				</NavLink>
 				<NavLink to="/about">About</NavLink>
 				<NavLink to="/login">Login</NavLink>
+				<NavLink id="cart" to="/login">
+					<img alt="cart logo" src="./style/shopping_cart-logo.svg"/>
+				</NavLink>
 			</div>
 		);
 	}
