@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <title>D.TECH</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel='manifest' href='/game/manifest.webmanifest'>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: green;
+      }
+      canvas {
+        background-color: bisque;
+        border: 1px solid black;
+      }
+      div{
+        display: inline-block;
+        height: 50px;
+        width: 50px;
+        background-color: aquamarine;
+      }
+    </style>
+  </head>
+  <body>
+      <audio id="audio" loop>
+          <source src="back_music.mp3" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+        <div id="fps"></div>
+    <center><canvas id="canvas"></canvas></center>HA! JANI FLOOR TEXTURE TA WORST<br>
+    <center><div id="up">up</div></center><br>
+    <center><div id="left">left</div>
+    <div id="right">right</div></center><br>
+    
+  <center><div id="down">down</div></center>
+    <h1>
+      W A S D control <br />
+      UNDER DEVEPLOMENT<br />
+      Now sans can walk in any direction
+    </h1>
+    <a href=".." style="z-index: 1000;position: fixed;padding: 5px;bottom: 10px;right: 10px;">Back</a>
+
+    <script src="./script.js" type="text/javascript"></script>
+    <!-- <script type="text/javascript">
+      // This is the service worker with the Advanced caching
+
+      // Add this below content to your HTML page, or add the js file to your page at the very top to register service worker
+      
+      // Check compatibility for the browser we're running this in
+      if ("serviceWorker" in navigator) {
+        if (navigator.serviceWorker.controller) {
+          console.log("[PWA Builder] active service worker found, no need to register");
+        } else {
+          // Register the service worker
+          navigator.serviceWorker
+            .register("pwabuilder-sw.js", {
+              scope: "./"
+            })
+            .then(function (reg) {
+              console.log("[PWA Builder] Service worker has been registered for scope: " + reg.scope);
+            });
+        }
+      }
+      </script> -->
+  </body>
+</html>
