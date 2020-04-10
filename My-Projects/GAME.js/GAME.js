@@ -1,142 +1,97 @@
 let GAME = {
-	renderer: function(getcanvas,res) {
-		this.canvas = getcanvas;
-		this.canvas.width=window.innerWidth*(res/100)
-		this.canvas.height=window.innerHeight*(res/100)
-		let thiis=this
-		window.onresize=function(){
-			thiis.canvas.width=window.innerWidth*(res/100)
-			thiis.canvas.height=window.innerHeight*(res/100)
+	init: function (canvas, width, height, res) {
+		this.canvas = canvas;
+		this.ctx = this.canvas.getContext("2d");
+
+		this.width = width;
+		this.height = height;
+		this.canvasWidth = width;
+		this.canvasHeight = height;
+		this.ratio = width / height;
+
+		this.canvasWidth = (window.innerWidth - 10) * (res / 100);
+		this.canvasHeight = (window.innerHeight - 10) * (res / 100);
+
+		if (this.canvasHeight < this.canvasWidth / this.ratio)
+			this.canvasWidth = this.canvasHeight * this.ratio;
+		else this.canvasHeight = this.canvasWidth / this.ratio;
+
+		this.canvas.width = this.width;
+		this.canvas.height = this.height;
+		this.ctx.imageSmoothingEnabled = false;
+
+		this.canvas.style.width = this.canvasWidth + "px";
+		this.canvas.style.height = this.canvasHeight + "px";
+
+		function resize() {
+			this.canvasWidth = (window.innerWidth - 10) * (res / 100);
+			this.canvasHeight = (window.innerHeight - 10) * (res / 100);
+
+			if (this.canvasHeight < this.canvasWidth / this.ratio)
+				this.canvasWidth = this.canvasHeight * this.ratio;
+			else this.canvasHeight = this.canvasWidth / this.ratio;
+
+			this.canvas.width = this.width;
+			this.canvas.height = this.height;
+			this.ctx.imageSmoothingEnabled = false;
+
+			this.canvas.style.width = this.canvasWidth + "px";
+			this.canvas.style.height = this.canvasHeight + "px";
 		}
-		this.ctx = getcanvas.getContext("2d");
+		resize.bind(this);
+		window.addEventListener("resize", resize.bind(this));
+		// this.canvas = getcanvas;
+		// this.canvas.width = 500;
+		// this.canvas.height =500;
+		// this.
+		// this.canvas.style.width = (window.innerWidth-10) * (res / 100);
+		// this.canvas.style.height =( window.innerHeight-10) * (res / 100);
+		// let thiis = this;
+		// window.onresize = function () {
+		// 	this.canvas = getcanvas;
+		// 	this.canvas.width = 500;
+		// 	this.canvas.height =500;
+		// 	this.canvas.style.width = (window.innerWidth-10) * (res / 100)+"px";
+		// 	this.canvas.style.height =( window.innerHeight-10) * (res / 100)+"px";
+		// };
+		// this.ctx = getcanvas.getContext("2d");
+		// this.ctx.imageSmoothingEnabled=false
 		// this.last_scale=0;
 	},
-	edit: function(ob, ObjectName) {
-		if (!this.editing) {
+	editor: {
+		edit: function (ob, ObjectName) {
+			if (this.object) this.stopEditing();
 			this.editing = true;
 			ob.editmode = true;
 			ob.update = false;
+			this.object = ob;
 
 			if (!ObjectName)
-				this.EditingObjectName = prompt(
+				this.objectName = prompt(
 					"Enter name of the object that your are editing",
 					"ObjectName"
 				);
-			else this.EditingObjectName = ObjectName;
+			else this.objectName = ObjectName;
 			this.EditingCode = "";
 
-			return "Your are now editing " + this.EditingObjectName;
-		} else {
-			alert(
-				"You cannot edit two game object at once. Run GAME.stopediting(<ObjectName>) to stop editing the previous object."
-			);
-		}
-	},
-	stopediting: function(ob) {
-		if (ob.editmode) {
-			ob.editmode = false;
-			ob.update = true;
-			this.editing = false;
+			return "Your are now editing " + this.objectName;
+		},
+		stopEditing: function () {
+			if (this.object.editmode) {
+				this.object.editmode = false;
+				this.object.update = true;
+				this.editing = false;
 
-			this.canvas.onmousedown = {};
-			this.canvas.onmousemove = {};
-			this.canvas.oncontextmenu = {};
-			this.canvas.onauxclick = {};
+				GAME.canvas.onmousedown = {};
+				GAME.canvas.onmousemove = {};
+				GAME.canvas.oncontextmenu = {};
+				GAME.canvas.onauxclick = {};
 
-			return this.EditingCode;
-		}
-	},
-	object: class {
-		constructor(str, a, NoOfImage) {
-			if (!a) a = 100;
-			if (!str) str = "square";
-			// this.name=this.constructor
-			this.size = a;
-
-			this.x = 0;
-			this.y = 0;
-
-			this.vx = 0;
-			this.vy = 0;
-
-			this.ax = 0;
-			this.ay = 0;
-
-			this.colour="#ff0000"
-
-			this.update = true;
-
-			this.editmode = false;
-
-			this.type = str;
-
-			if (str == "square")
-				this.points = [
-					{ x: a, y: a },
-					{ x: -a, y: a },
-					{ x: -a, y: -a },
-					{ x: a, y: -a }
-				];
-			else if (str == "circle") {
-				this.points = [
-					{ x: a, y: a },
-					{ x: -a, y: a },
-					{ x: -a, y: -a },
-					{ x: a, y: -a }
-				];
-			} else {
-				this.points = [
-					{ x: a, y: a },
-					{ x: -a, y: a },
-					{ x: -a, y: -a },
-					{ x: a, y: -a }
-				];
-				this.image = new Image();
-			
-
-				this.animation = {
-					frames: [],
-					time: 0,
-					count:0,
-					fps: 1
-				};
-				let i = 0;
-				while (i < NoOfImage) {
-					try {
-						this.animation.frames[i] = new Image();
-						this.animation.frames[i].src =
-							str.split(".")[str.split(".").length-2] + "-" + i + "." + str.split(".")[str.split(".").length-1];
-						// console.log(this.animation.frames);
-						i++;
-					} catch {
-						break;
-					}
-				}
-				this.image=this.animation.frames[0]
-
+				return this.EditingCode;
 			}
-			this.polygon = new SAT.Polygon({ x: this.x, y: this.y }, this.points);
-		}
-		animate(start,stop,fps,dt){
-			this.animation.time+=dt
-
-			if(this.animation.time>1000/fps){
-				this.animation.time=0;
-				this.image=this.animation.frames[this.animation.count]
-
-				this.animation.count++;
-
-				if(this.animation.count>this.animation.frames.length-1){
-				this.animation.count=0
-					
-				}
-
-			}
-
-		}
-
-		addpoint(x, y) {
-			let find_angle = function(x, y) {
+		},
+		addPoint(x, y) {
+			let find_angle = function (x, y) {
 				if (x > 0 && y > 0) return (Math.atan2(y, x) * 180) / Math.PI;
 				if (x < 0 && y > 0) return (Math.atan2(y, x) * 180) / Math.PI;
 				if (x > 0 && y < 0)
@@ -159,20 +114,23 @@ let GAME = {
 
 			angle = find_angle(x, y);
 
-			for (let i = 0; i < this.points.length - 1; i++) {
-				angle1 = find_angle(this.points[i].x, this.points[i].y);
-				angle2 = find_angle(this.points[i + 1].x, this.points[i + 1].y);
+			for (let i = 0; i < this.object.points.length - 1; i++) {
+				angle1 = find_angle(this.object.points[i].x, this.object.points[i].y);
+				angle2 = find_angle(
+					this.object.points[i + 1].x,
+					this.object.points[i + 1].y
+				);
 				// console.log(angle);
 				// console.log(angle1);
 				// console.log(angle2);
 
 				if (angle >= angle1 && angle <= angle2) {
 					angleChanged = true;
-					for (let j = this.points.length - 1; j > i; j--) {
-						this.points[j + 1] = this.points[j];
+					for (let j = this.object.points.length - 1; j > i; j--) {
+						this.object.points[j + 1] = this.object.points[j];
 						// this.polygon.points[j+1]=this.polygon.points[j]
 					}
-					this.points[i + 1] = { x: x, y: y };
+					this.object.points[i + 1] = { x: x, y: y };
 					// this.polygon.points[i+1] = {x:x, y:y};
 
 					break;
@@ -192,16 +150,211 @@ let GAME = {
 			if (!angleChanged) this.points.push({ x: x, y: y });
 			angleChanged = false;
 
+			this.object.polygon = new SAT.Polygon(
+				{ x: this.object.x, y: this.object.y },
+				this.object.points
+			);
+		},
+		deletePoint(n) {
+			for (let j = n; j < this.object.points.length - 1; j++)
+				this.object.points[j] = this.object.points[j + 1];
+			this.object.points[this.object.points.length] = {};
+		},
+		open: (ar) => {
+			let editor = document.createElement("div");
+			editor.id = "editor";
+
+			editor.innerHTML = `
+			<style>
+			#editor{
+				display: block;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 200px;
+				height: 200px;
+				background-color: white;
+				border-radius: calc(29px / 2);
+				margin: calc(29px / 2);
+				
+			}
+			#editor > nav{
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				background-color: darkorange;
+				border-radius: calc(29px / 2);
+			}
+			#editor > nav > button{
+				border-radius: 50%;
+				padding: 5px;
+				text-align: center;
+				width: 29px;
+			}
+			#editor > button{
+				padding: 5px;
+				border-radius: 5px;
+			}
+			#editor > #stop{
+				position: absolute;
+				margin: calc(29px / 2);
+				bottom: 0;
+				right: 0;
+			}
+			</style>
+			<nav>
+				<div id="tittle">GAME.editor</div>
+				<button id="close" onclick="GAME.editor.close()">X</button>
+			</nav>
+			<label>Edit: 
+			`;
+			for (let i = 0; i < ar.length; i++) {
+				editor.innerHTML += `
+				<button onclick="GAME.editor.edit(${ar[i]},'${ar[i]}')">${ar[i]}</button>
+				`;
+			}
+			editor.innerHTML += `
+			</label>
+			<div id="code"></div>
+			<button id="stop" onclick="GAME.editor.stopEditing()">Stop Editing</button>
+			`;
+			editor.onmousedown = (e) => {
+				let initialX = e.offsetX;
+				let initialY = e.offsetY;
+				editor.onmousemove = (e) => {
+					// console.log(e.clientX,e.clientY)
+					editor.style.left = -initialX + e.pageX + "px";
+					editor.style.top = -initialY + e.pageY + "px";
+				};
+			};
+			editor.onmouseup = () => {
+				editor.onmousemove = {};
+			};
+			editor.onmouseleave = () => {
+				editor.onmousemove = {};
+			};
+			document.body.append(editor);
+		},
+		close: () => {
+			document.getElementById("editor").style.display = "none";
+		},
+	},
+	object: class {
+		constructor(str, a, NoOfImage) {
+			if (!a) a = 100;
+			if (!str) str = "square";
+			// this.name=this.constructor
+			this.size = a;
+
+			this.x = 0;
+			this.y = 0;
+
+			this.vx = 0;
+			this.vy = 0;
+
+			this.ax = 0;
+			this.ay = 0;
+
+			this.colour = "#ff0000";
+
+			this.update = true;
+
+			this.editmode = false;
+
+			this.type = str;
+
+			if (str == "square") {
+				this.points = [
+					{ x: a, y: a },
+					{ x: -a, y: a },
+					{ x: -a, y: -a },
+					{ x: a, y: -a },
+				];
+				this.width = 2 * a;
+				this.height = 2 * a;
+			} else if (str == "circle") {
+				this.points = [
+					{ x: a, y: a },
+					{ x: -a, y: a },
+					{ x: -a, y: -a },
+					{ x: a, y: -a },
+				];
+			} else {
+				this.image = new Image();
+
+				this.animation = {
+					frames: [],
+					time: 0,
+					count: 0,
+					fps: 1,
+				};
+				let i = 0;
+				while (i < NoOfImage) {
+					try {
+						this.animation.frames[i] = new Image();
+						this.animation.frames[i].src =
+							str.split(".")[str.split(".").length - 2] +
+							"-" +
+							i +
+							"." +
+							str.split(".")[str.split(".").length - 1];
+
+						// console.log(this.animation.frames);
+						i++;
+					} catch {
+						break;
+					}
+				}
+				this.image = this.animation.frames[0];
+				this.points = [
+					{
+						x: ((this.image.width / 2) * a) / 100,
+						y: ((this.image.height / 2) * a) / 100,
+					},
+					{
+						x: ((-this.image.width / 2) * a) / 100,
+						y: ((this.image.height / 2) * a) / 100,
+					},
+					{
+						x: ((-this.image.width / 2) * a) / 100,
+						y: ((-this.image.height / 2) * a) / 100,
+					},
+					{
+						x: ((this.image.width / 2) * a) / 100,
+						y: ((-this.image.height / 2) * a) / 100,
+					},
+				];
+				// this.points = [
+				// 	{ x: a, y: a },
+				// 	{ x: -a, y: a },
+				// 	{ x: -a, y: -a },
+				// 	{ x: a, y: -a },
+				// ];
+				this.width = (this.image.width * a) / 100;
+				this.height = (this.image.height * a) / 100;
+			}
 			this.polygon = new SAT.Polygon({ x: this.x, y: this.y }, this.points);
 		}
-		deletepoint(n) {
-			for (let j = n; j < this.points.length - 1; j++)
-				this.points[j] = this.points[j + 1];
-			this.points[this.points.length] = {};
+		animate(start, stop, fps, dt) {
+			this.animation.time += dt;
+
+			if (this.animation.time > 1000 / fps) {
+				this.animation.time = 0;
+				this.image = this.animation.frames[this.animation.count];
+
+				this.animation.count++;
+
+				if (this.animation.count > this.animation.frames.length - 1) {
+					this.animation.count = 0;
+				}
+			}
 		}
 	},
 
-	collisionsBetween: function(ob1, ob2) {
+	collisionsBetween: function (ob1, ob2) {
+		ob1.polygon=new SAT.Polygon({ x: ob1.x, y: ob1.y },ob1.points)
+		ob2.polygon=new SAT.Polygon({ x: ob2.x, y: ob2.y },ob2.points)
+
 		return SAT.testPolygonPolygon(ob1.polygon, ob2.polygon);
 	},
 
@@ -232,9 +385,9 @@ let GAME = {
 		vy: 0,
 
 		ax: 0,
-		ay: 0
+		ay: 0,
 	},
-	render: function(ob, dt, uupdate) {
+	render: function (ob, dt, uupdate) {
 		// if (uupdate == null) update = true;
 		// GAME.Response.clear();
 		this.camera.vx += this.camera.ax * dt;
@@ -244,30 +397,29 @@ let GAME = {
 		this.camera.y += this.camera.vy * dt;
 
 		// this.scale = scale;
-		// let scale_points = function(ob, scale) {
+		// let scale_points = function (ob) {
 		// 	let ar = [];
 		// 	for (i = 0; i < ob.points.length; i++) {
-		// 		ar[i] = { x: ob.points[i].x  , y: ob.points[i].y  };
+		// 		ar[i] = { x: ob.points[i].x, y: ob.points[i].y };
 		// 	}
 		// 	ob.polygon = new SAT.Polygon({ x: ob.x, y: ob.y }, ar);
 		// };
 
 		// let scalex = this.canvas.width / 1000;
-		if(this.canvas.height<=this.canvas.width)
-		scale = this.canvas.height / 1000;
-		else
-		scale = this.canvas.width / 1000;
+		// if (this.canvas.height <= this.canvas.width)
+		// 	scale = this.canvas.height / 100;
+		// else scale = this.canvas.width / 100;
 
 		// console.log(this.canvas.height)
 
 		// if(scale!=this.scale){
-		// console.log("resizing")
-		// scale_points(ob, scale);
+		// // console.log("resizing")
 
 		// }
+		let kx = -this.camera.x + ob.x + this.canvas.width / 2;
+		let ky = this.camera.y - ob.y + this.canvas.height / 2;
 
-		let kx = -this.camera.x * scale + ob.x * scale + this.canvas.width / 2;
-		let ky = this.camera.y * scale - ob.y * scale + this.canvas.height / 2;
+		// scale_points(ob);
 
 		if (ob.update) {
 			ob.vx += ob.ax * dt;
@@ -277,9 +429,13 @@ let GAME = {
 			ob.y += ob.vy * dt;
 
 			// ob.polygon.translate(ob.vx * dt, ob.vy * dt)
+			// console.log(ob.y)
 
-			ob.polygon.pos.x = ob.x;
-			ob.polygon.pos.y = ob.y;
+			// ob.polygon.pos.x = ob.x;
+			// ob.polygon.pos.y = ob.y;
+
+			// console.log(ob.polygon.pos)
+			// console.log(ob.x,ob.y)
 		}
 
 		// for(let i=0;i<ob.polygon.points.length;i++){
@@ -290,10 +446,7 @@ let GAME = {
 			this.ctx.fillStyle = ob.colour;
 
 			this.ctx.beginPath();
-			this.ctx.moveTo(
-				ob.points[0].x * scale + kx,
-				-ob.points[0].y * scale + ky
-			);
+			this.ctx.moveTo(ob.points[0].x + kx, -ob.points[0].y + ky);
 			// 			if(ob.editmode){
 			// 		this.ctx.beginPath();
 			// this.ctx.arc(ob.points[0].x * scale + kx, -ob.points[0].y * scale + ky, 10, 0, 2 * Math.PI);
@@ -303,10 +456,7 @@ let GAME = {
 			// }
 
 			for (i = 1; i < ob.points.length; i++) {
-				this.ctx.lineTo(
-					ob.points[i].x * scale + kx,
-					-ob.points[i].y * scale + ky
-				);
+				this.ctx.lineTo(ob.points[i].x + kx, -ob.points[i].y + ky);
 				// 	if(ob.editmode){
 				// 		this.ctx.beginPath();
 				// this.ctx.arc(ob.points[0].x * scale + kx, -ob.points[0].y * scale + ky, 10, 0, 2 * Math.PI);
@@ -314,8 +464,7 @@ let GAME = {
 				// this.ctx.beginPath();	}
 			}
 			this.ctx.fill();
-		} 
-		else if (ob.type == "circle") {
+		} else if (ob.type == "circle") {
 		} else {
 			// console.log(ob.animation.count)
 			this.ctx.drawImage(
@@ -324,22 +473,21 @@ let GAME = {
 				0,
 				ob.image.width,
 				ob.image.height,
-				kx - (ob.image.width / 2) *ob.size*scale/100,
-				ky - (ob.image.height / 2) * ob.size*scale/100,
-				ob.image.width * ob.size*scale/100,
-				ob.image.height *ob.size* scale/100
+				kx - ((ob.image.width / 2) * ob.size ) / 100,
+				ky - ((ob.image.height / 2) * ob.size ) / 100,
+				(ob.image.width * ob.size ) / 100,
+				(ob.image.height * ob.size ) / 100
 			);
 			// console.log(ob.image.height * scale/100)
 		}
 
 		if (ob.editmode) {
-
 			this.ctx.fillStyle = "#ab7def99";
 
 			this.ctx.beginPath();
 			this.ctx.moveTo(
-				ob.points[0].x * scale + kx,
-				-ob.points[0].y * scale + ky
+				ob.points[0].x  + kx,
+				-ob.points[0].y  + ky
 			);
 			// 			if(ob.editmode){
 			// 		this.ctx.beginPath();
@@ -351,8 +499,8 @@ let GAME = {
 
 			for (i = 1; i < ob.points.length; i++) {
 				this.ctx.lineTo(
-					ob.points[i].x * scale + kx,
-					-ob.points[i].y * scale + ky
+					ob.points[i].x  + kx,
+					-ob.points[i].y  + ky
 				);
 				// 	if(ob.editmode){
 				// 		this.ctx.beginPath();
@@ -367,9 +515,9 @@ let GAME = {
 				// console.log(i+this.ctx.fillStyle)
 				this.ctx.beginPath();
 				this.ctx.arc(
-					ob.points[i].x * scale + kx,
-					-ob.points[i].y * scale + ky,
-					25 * scale,
+					ob.points[i].x  + kx,
+					-ob.points[i].y  + ky,
+					25 ,
 					0,
 					2 * Math.PI
 				);
@@ -379,22 +527,22 @@ let GAME = {
 			this.ctx.beginPath();
 
 			this.ctx.fillStyle = "#00ff00";
-			this.ctx.arc(kx, ky, 25 * scale, 0, 2 * Math.PI);
+			this.ctx.arc(kx, ky, 25 , 0, 2 * Math.PI);
 			this.ctx.fill();
 			let canvas69 = this;
 			// let p;
 
 			// let EditAdd,EditMovePoint,EditMoveOrigin="",EditDelete
 
-			this.canvas.onmousedown = function() {
+			this.canvas.onmousedown = function () {
 				for (i = 0; i < ob.points.length; i++) {
-					let x1 = ob.points[i].x * scale + kx;
-					let y1 = -ob.points[i].y * scale + ky;
+					let x1 = ob.points[i].x + kx;
+					let y1 = -ob.points[i].y  + ky;
 					let x2 = event.offsetX;
 					let y2 = event.offsetY;
 					if (
 						Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) <=
-						25 * scale
+						25 
 					)
 						p = i;
 				}
@@ -403,49 +551,49 @@ let GAME = {
 				let x2 = event.offsetX;
 				let y2 = event.offsetY;
 
-				let px = ob.x * scale,
-					py = ob.y * scale;
+				let px = ob.x ,
+					py = ob.y ;
 
 				if (
 					Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) <=
-					25 * scale
+					25 
 				)
 					p = -1;
-				canvas69.canvas.onmousemove = function() {
+				canvas69.canvas.onmousemove = function () {
 					// console.log({x:(event.offsetX - kx) / scale,y:-(event.offsetY - ky) / scale})
 					// console.log(event.offsetX)
 					try {
 						if (p >= 0) {
 							ob.points[p] = {
-								x: (event.offsetX - kx) / scale,
-								y: -(event.offsetY - ky) / scale
+								x: (event.offsetX - kx) ,
+								y: -(event.offsetY - ky) ,
 							};
 							EditMovePoint[p] =
-								GAME.EditingObjectName +
+								GAME.editor.objectName +
 								".points[" +
 								p +
 								"].x=" +
-								(event.offsetX - kx) / scale +
+								(event.offsetX - kx)  +
 								";\n" +
-								GAME.EditingObjectName +
+								GAME.editor.objectName +
 								".points[" +
 								p +
 								"].y=" +
-								-(event.offsetY - ky) / scale +
+								-(event.offsetY - ky)  +
 								";\n";
 							// 	+"<ObjectName>.points["+p+"].y="+-(event.offsetY - ky) / scale
 							// 	console.log("<ObjectName>.points["+p+"].x="+(event.offsetX - kx) / scale+"\n"
 							// 	+"<ObjectName>.points["+p+"].y="+-(event.offsetY - ky) / scale)
 							// console.log("Change <ObjectName> to the name of the object that you edited and put the above code in your gamedesign.js")
 						} else if (p == -1) {
-							ob.x = (px + (event.offsetX - kx)) / scale;
-							ob.y = (py - (event.offsetY - ky)) / scale;
+							ob.x = (px + (event.offsetX - kx)) 
+							ob.y = (py - (event.offsetY - ky))  ;
 							EditMoveOrigin =
-								GAME.EditingObjectName +
+								GAME.objectName +
 								".x=" +
 								(px + (event.offsetX - kx)) +
 								";\n" +
-								GAME.EditingObjectName +
+								GAME.objectName +
 								".y=" +
 								-(py + (event.offsetY - ky)) +
 								";\n";
@@ -455,44 +603,45 @@ let GAME = {
 				};
 			};
 
-			this.canvas.oncontextmenu = function() {
+			this.canvas.oncontextmenu = function () {
 				// console.log(event.offsetX)
-				ob.addpoint(
-					(event.offsetX - kx) / scale,
-					-(event.offsetY - ky) / scale
+				GAME.editor.addPoint(
+					(event.offsetX - kx) ,
+					-(event.offsetY - ky)
 				);
-				GAME.EditingCode +=
-					GAME.EditingObjectName +
-					".addpoint(" +
-					(event.offsetX - kx) / scale +
+				GAME.editor.EditingCode +=
+					GAME.editor.objectName +
+					".addPoint(" +
+					(event.offsetX - kx) +
 					"," +
-					-(event.offsetY - ky) / scale +
+					-(event.offsetY - ky) +
 					");\n";
 
 				return false;
 			};
 
-			this.canvas.onauxclick = function() {
+			this.canvas.onauxclick = function () {
 				if (event.button == 1) {
 					for (i = 0; i < ob.points.length; i++) {
-						let x1 = ob.points[i].x * scale + kx;
-						let y1 = -ob.points[i].y * scale + ky;
+						let x1 = ob.points[i].x + kx;
+						let y1 = -ob.points[i].y  + ky;
 						let x2 = event.offsetX;
 						let y2 = event.offsetY;
 						if (
 							Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) <=
-							25 * scale
+							25 
 						) {
-							ob.deletepoint(i);
+							GAME.editor.deletePoint(i);
 							GAME.EditingCode +=
-								GAME.EditingObjectName + ".deletepoint(" + i + ");\n";
+								GAME.objectName + ".deletePoint(" + i + ");\n";
 						}
 					}
 					return false;
 				}
 			};
-			this.canvas.onmouseup = function() {
+			this.canvas.onmouseup = function () {
 				canvas69.canvas.onmousemove = {};
+				canvas69.canvas.onmousedown = {};
 				try {
 					GAME.EditingCode += EditMoveOrigin;
 				} catch {}
@@ -502,48 +651,34 @@ let GAME = {
 			};
 		}
 	},
-	clear: function() {
+	clear: function () {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	},
 	controller: class {
-		constructor(left, right, up, down) {
-			this.left = left;
-			this.right = right;
-			this.up = up;
-			this.down = down;
-
-			this.rightPressed = false;
-			this.leftPressed = false;
-			this.upPressed = false;
-			this.downPressed = false;
-
-			let ob = this;
+		constructor(keys) {
+			this.key = [];
+			let thiis = this;
+			for (let i = 0; i < keys.length; i++) {
+				this.key[i] = {
+					name: keys[i],
+					pressed: false,
+				};
+			}
 			document.addEventListener("keydown", ControllerDown, false);
 			document.addEventListener("keyup", ControllerUp, false);
 			function ControllerDown(event) {
-				if (event.key == ob.right) {
-					ob.rightPressed = true;
-				} else if (event.key == ob.left) {
-					ob.leftPressed = true;
-				}
-				if (event.key == ob.down) {
-					ob.downPressed = true;
-				} else if (event.key == ob.up) {
-					ob.upPressed = true;
+				event.preventDefault();
+				for (let i = 0; i < keys.length; i++) {
+					if (event.key == keys[i]) thiis.key[i].pressed = true;
 				}
 			}
 			function ControllerUp(event) {
-				if (event.key == ob.right) {
-					ob.rightPressed = false;
-				} else if (event.key == ob.left) {
-					ob.leftPressed = false;
-				}
-				if (event.key == ob.down) {
-					ob.downPressed = false;
-				} else if (event.key == ob.up) {
-					ob.upPressed = false;
+				event.preventDefault();
+
+				for (let i = 0; i < keys.length; i++) {
+					if (event.key == keys[i]) thiis.key[i].pressed = false;
 				}
 			}
 		}
-	}
+	},
 };
