@@ -14,7 +14,7 @@ section
 {
 	height: 100%;
 	padding:10px;
-	/* display: flex; */
+	display: flex;
 }
 section:nth-child(2){
 	display: grid;
